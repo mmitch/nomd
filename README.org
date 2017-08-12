@@ -23,10 +23,11 @@ Specifically, nomd is no omd.
   - [ ] tcp connect with content check
   - [ ] http response code
   - [ ] http content check
-- [ ] [0/3] plugin architecture for notifications
+- [-] [1/4] plugin architecture for notifications
   - [ ] mail
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
+  - [X] dbus/notify-send
 - [ ] main configuration file is plain bash and is simply run
 - [ ] wrappers for scripts in other languages
 - [ ] support local configuration with git branches

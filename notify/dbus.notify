@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# notify via notify-send (local notification dbus)
+# parameters:
+# $1: regexp to filter notifications
+notify_dbus()
+{
+    # receive parameters and set defaults
+    local FILTER=${1:-:}
+
+    # map severities to urgencies
+    # needs bash 4.0 associative arrays
+    declare -A URG
+    URG=( [C]=critical [W]=normal [I]=low )
+
+    # send messages
+    local LINE
+    grep -E "$FILTER" "$NOMD_CHECK_RESULTS" | \
+	while read LINE; do
+	    notify-send -u ${URG[${LINE:0:1}]} "$LINE"
+	done
+}
