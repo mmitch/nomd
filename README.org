@@ -33,6 +33,8 @@ Specifically, nomd is no omd.
 
 ** protocol
 
+*** checks
+
 Checks write one or more lines to stdout in the format
 
 : SEVERITY:CHECK:INFORMATION
@@ -45,6 +47,12 @@ where
   - ~I~ :: informational (quite verbose, also used for debug)
 - /CHECK/ :: is the name of the check that wrote the line
 - /INFORMATION/ :: is freetext information about the details of the check
+
+*** notifications
+
+A notification is called with the environment variable
+~NOMD_CHECK_RESULTS~ pointing to a file with the complete results of
+the preceding checks.  See [[checks]] for the file format description.
 
 ** things for thoughts
 
