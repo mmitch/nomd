@@ -25,7 +25,7 @@ Specifically, nomd is no omd.
   - [ ] http content check
 - [ ] [0/3] plugin architecture for notifications
   - [ ] mail
-  - [ ] my notification framework
+  - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
 - [ ] main configuration file is plain bash and is simply run
 - [ ] wrappers for scripts in other languages
