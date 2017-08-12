@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# check system load (15 min interval)
+# parameters:
+# $1 load THRESHOLD for CRITICAL
+# $2 load THRESHOLD for WARNING
+check_load()
+{
+    # receive parameters and set defaults
+    local CRITICAL="${1:-8}"
+    local WARNING="${2:-$CRITICAL}" 
+    
+    # get 15 minute average
+    local LOAD1 LOAD5 LOAD15 UNDEF
+    read LOAD1 LOAD5 LOAD15 UNDEF < /proc/loadavg
+
+    # bash knows no floats, so calculate with bc
+    if [ $(bc <<< "$LOAD15 >= $CRITICAL") -eq 1 ]; then
+	echo "C:load:$LOAD15 higher than $CRITICAL (crit)"
+    elif [ $(bc <<< "$LOAD15 >= $WARNING") -eq 1 ]; then
+	echo "W:load:$LOAD15 higher than $WARNING (warn)"
+    else
+	echo "I:load:$LOAD15"
+    fi
+}
