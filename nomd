@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+
+# set up temporary file
+NOMD_CHECK_RESULTS="$(mktemp --tmpdir nomd.check_results.XXXXXXXX)"
+
+# autoclean tempfile on exit or error
+remove_tempfile()
+{
+    rm "$NOMD_CHECK_RESULTS"
+}
+trap remove_tempfile EXIT
+
+# run checks
+bash > "$NOMD_CHECK_RESULTS" <<EOF
+source check/*.check
+source check.config
+EOF
+
+# run notifications
+export NOMD_CHECK_RESULTS
+bash <<EOF
+source notify/*.notify
+source notify.config
+EOF

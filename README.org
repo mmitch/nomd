@@ -10,7 +10,7 @@ Specifically, nomd is no omd.
 - [ ] detected a real-world problem
 - [ ] works for me on at least three machines
 - [ ] basic features implemented
-- [ ] a wild first code appears!
+- [X] a wild first code appears!
 - [X] some vague ideas and rumors
 
 ** feature fahrplan
@@ -28,9 +28,16 @@ Specifically, nomd is no omd.
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
   - [X] dbus/notify-send
-- [ ] main configuration file is plain bash and is simply run
+- [X] main configuration file is plain bash and is simply run
 - [ ] wrappers for scripts in other languages
 - [ ] support local configuration with git branches
+- [ ] add copyright notices, project homepage and other boring stuff
+
+** instructions
+
+- edit ~check.config~ to contain your desired checks
+- edit ~notify.config~ to contain your desired notifications
+- run ~nomd~
 
 ** protocol
 
