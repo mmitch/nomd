@@ -49,12 +49,9 @@ Checks write one or more lines to stdout in the format
 
 where
 
-- /SEVERITY/ :: is one 
-  - ~C~ :: critical
-  - ~W~ :: warning
-  - ~I~ :: informational (quite verbose, also used for debug)
-- /CHECK/ :: is the name of the check that wrote the line
-- /INFORMATION/ :: is freetext information about the details of the check
+- SEVERITY :: is one of ~C~ (critical), ~W~ (warning) or ~I~ (informational - quite verbose, also used for debugging)
+- CHECK :: is the name of the check that wrote the line
+- INFORMATION :: is freetext information about the details of the check
 
 *** notifications
 
@@ -75,3 +72,5 @@ the preceding checks.  See [[checks]] for the file format description.
   - per module configuration file?
 - convenience function for writing the protocol lines that
   automatically detects the name of the current check
+- switch README from Org to Markdown?
+  - Org is cooler, but the Github rendering is slightly sucky
