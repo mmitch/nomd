@@ -1,0 +1,44 @@
+* nomd
+
+Generally, nomd is a simple nomitoring distribution.
+Specifically, nomd is no omd.
+
+** project status-o-meter
+
+- [ ] I actually know of one other user
+- [ ] might be usable for somebody else
+- [ ] detected a real-world problem
+- [ ] works for me on at least three machines
+- [ ] basic features implemented
+- [ ] a wild first code appears!
+- [X] some vague ideas and rumors
+
+** feature fahrplan
+
+- [ ] [0/7] plugin architecture for checks
+  - [ ] load
+  - [ ] diskfree
+  - [ ] memfree
+  - [ ] tcp connect
+  - [ ] tcp connect with content check
+  - [ ] http response code
+  - [ ] http content check
+- [ ] [0/3] plugin architecture for notifications
+  - [ ] mail
+  - [ ] my notification framework
+  - [ ] pushbullet
+- [ ] main configuration file is plain bash and is simply run
+- [ ] wrappers for scripts in other languages
+- [ ] support local configuration with git branches
+
+** things for thoughts
+
+- configuration
+  - simple configurations can be done directly, but what about
+    - lists
+    - even more complicated things
+  - for example diskfree plugin
+    - skip some mounts
+    - change warning thresholds for others
+  - central configuration file?
+  - per module configuration file?
