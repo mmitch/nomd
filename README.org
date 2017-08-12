@@ -31,6 +31,21 @@ Specifically, nomd is no omd.
 - [ ] wrappers for scripts in other languages
 - [ ] support local configuration with git branches
 
+** protocol
+
+Checks write one or more lines to stdout in the format
+
+: SEVERITY:CHECK:INFORMATION
+
+where
+
+- /SEVERITY/ :: is one 
+  - ~C~ :: critical
+  - ~W~ :: warning
+  - ~I~ :: informational (quite verbose, also used for debug)
+- /CHECK/ :: is the name of the check that wrote the line
+- /INFORMATION/ :: is freetext information about the details of the check
+
 ** things for thoughts
 
 - configuration
@@ -42,3 +57,5 @@ Specifically, nomd is no omd.
     - change warning thresholds for others
   - central configuration file?
   - per module configuration file?
+- convenience function for writing the protocol lines that
+  automatically detects the name of the current check
