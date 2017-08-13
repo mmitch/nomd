@@ -12,8 +12,7 @@ check_http_status()
 
     # this uses HEAD from Perl LWP
     # TODO: use wget/curl if available
-    local STATUS DUMMY
-    read STATUS DUMMY <<< $(HEAD "$URL")
+    local STATUS=$(_get_http_status "$URL")
     if [ "$STATUS" != "$EXPECTED_STATUS" ]; then
 	echo "C:http_status:$STATUS != $EXPECTED_STATUS on $URL"
     else
@@ -33,9 +32,69 @@ check_http_content()
 
     # this uses GET from Perl LWP
     # TODO: use wget/curl if available
-    if GET "$URL" | grep -q -E "$EXPECTED_RE"; then
+    if _get_http_content "$URL" | grep -q -E "$EXPECTED_RE"; then
 	echo "I:http_status:content ok on $URL ($EXPECTED_RE)"
     else
 	echo "C:http_status:expected content not found in $URL: $EXPECTED_RE"
     fi
+}
+
+# cache selcted toolset in $CHECK_HTTP_TOOLSET
+_determine_http_toolset()
+{
+    if which wget >/dev/null; then
+	CHECK_HTTP_TOOLSET=wget
+    elif which curl >/dev/null; then
+	CHECK_HTTP_TOOLSET=curl
+    elif which HEAD GET >/dev/null; then
+	CHECK_HTTP_TOOLSET=lwp
+    else
+	echo 'C:http:no suitable toolset found (wget/curl/LWP)'
+    fi
+}
+
+_get_http_status()
+{
+    local URL="$1"
+
+    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
+
+    case $CHECK_HTTP_TOOLSET in
+	wget)
+	    local STATUS DUMMY
+	    read DUMMY STATUS DUMMY <<< $(wget --server-response --spider example.com 2>&1 | grep '^  HTTP')
+	    echo $STATUS
+	;;
+
+	curl)
+	    curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$URL"
+	    ;;
+	
+	lwp)
+	    local STATUS DUMMY
+	    read STATUS DUMMY <<< $(HEAD "$URL")
+	    echo $STATUS
+	    ;;
+    esac
+}
+
+_get_http_content()
+{
+    local URL="$1"
+
+    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
+
+    case $CHECK_HTTP_TOOLSET in
+	wget)
+	    wget -q -O- "$URL"
+	;;
+
+	curl)
+	    curl -o- --silent "$URL"
+	    ;;
+	
+	lwp)
+	    GET "$URL"
+	    ;;
+    esac
 }
