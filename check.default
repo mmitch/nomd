@@ -3,6 +3,7 @@ check_load
 
 # check internet connectivity ;-)
 check_http_status
+check_http_content
 
 # run check_apt only on systems that have apt available
 # the regexp tries to match both Ubuntu and Debian security sources

@@ -20,3 +20,22 @@ check_http_status()
 	echo "I:http_status:$STATUS as expected on $URL"
     fi
 }
+
+# check http response content
+# parameters:
+# $1 URL to connect to
+# $2 regexp of expected content
+check_http_content()
+{
+    # receive parameters and set defaults
+    local URL="${1:-http://www.example.com/}"
+    local EXPECTED_RE="${2:-Example Domain}" 
+
+    # this uses GET from Perl LWP
+    # TODO: use wget/curl if available
+    if GET "$URL" | grep -q -E "$EXPECTED_RE"; then
+	echo "I:http_status:content ok on $URL ($EXPECTED_RE)"
+    else
+	echo "C:http_status:expected content not found in $URL: $EXPECTED_RE"
+    fi
+}
