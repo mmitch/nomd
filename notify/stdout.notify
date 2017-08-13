@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# notify via stdout (using colors if available)
+# parameters:
+# $1: regexp to filter notifications
+notify_stdout()
+{
+    # receive parameters and set defaults
+    local FILTER=${1:-:}
+
+    # map severities to urgencies
+    # needs bash 4.0 associative arrays
+    declare -A SEVERITY
+    if tput sgr0 >/dev/null 2>&1; then
+	# colorize!
+	SEVERITY=( [C]="$(tput setaf 1; tput bold)[CRIT]$(tput sgr0)" [W]="$(tput setaf 3; tput bold)[WARN]$(tput sgr0)" [I]='[INFO]' )
+    else
+	SEVERITY=( [C]='[CRIT]' [W]='[WARN]' [I]='[INFO]' )
+    fi
+
+    # output messages
+    local LINE
+    grep -E "$FILTER" "$NOMD_CHECK_RESULTS" | \
+	while IFS=: read SEV CHECK LINE; do
+	    printf "%s  %s  %s\n" "${SEVERITY[$SEV]}" "$CHECK" "$LINE" 
+	done
+}

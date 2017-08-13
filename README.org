@@ -26,12 +26,12 @@ Specifically, nomd is no omd.
   - [ ] http content check
   - [ ] apt available updates
   - [ ] ?? check_mk wrapper
-- [-] [1/5] plugin architecture for notifications
+- [-] [2/5] plugin architecture for notifications
   - [ ] mail
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
   - [X] dbus/notify-send
-  - [ ] terminal output
+  - [X] terminal output
 - [X] main configuration file is plain bash and is simply run
 - [X] provide default configuration, use local configuration instead if available
 - [ ] pass all nomd commandline arguments to checkers and notifications
