@@ -1,1 +1,7 @@
+# check system load
 check_load
+
+# run check_apt only on systems that have apt available
+# the regexp tries to match both Ubuntu and Debian security sources
+which apt >/dev/null && check_apt '(/updates|-security)'
+

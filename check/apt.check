@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# check pending apt updates (the needs a Debian based system, obviously)
+# parameters:
+# $1 regexp to select critical updates (possibly security related)
+check_apt()
+{
+    # receive parameters and set defaults
+    local CRIT_RE="${1:-.}"
+
+    # count pending updates
+    local COUNT_WARN=$(_get_apt_updatables | wc -l)
+    local COUNT_CRIT=$(_get_apt_updatables | grep -E "$CRIT_RE" | wc -l)
+
+    # output
+    if [ $COUNT_CRIT -gt 0 ]; then
+	echo "C:apt:${COUNT_CRIT} pending possibly security related updates (${COUNT_WARN} pending updates altogether)"
+    elif [ $COUNT_WARN -gt 0 ]; then
+	echo "W:apt:${COUNT_WARN} pending updates"
+    else
+	echo 'I:apt:no pending updates'
+    fi
+}
+
+_get_apt_updatables()
+{
+    # trick around to remove the warning for non-interactive use, but still show everything else from stderr
+    LANG=C apt list --upgradable 2> >(egrep -v "(^$|WARNING: apt does not have a stable CLI interface. Use with caution in scripts.)" 1>&2) | grep /
+}

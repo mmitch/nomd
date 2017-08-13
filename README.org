@@ -15,7 +15,7 @@ Specifically, nomd is no omd.
 
 ** feature fahrplan
 
-- [-] [1/9] plugin architecture for checks
+- [-] [2/9] plugin architecture for checks
   - [X] load
   - [ ] diskfree
     - ?? configure by stdin
@@ -24,7 +24,7 @@ Specifically, nomd is no omd.
   - [ ] tcp connect with content check
   - [ ] http response code
   - [ ] http content check
-  - [ ] apt available updates
+  - [X] apt available updates
   - [ ] ?? check_mk wrapper
 - [-] [2/5] plugin architecture for notifications
   - [ ] mail
