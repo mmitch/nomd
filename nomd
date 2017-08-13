@@ -12,8 +12,10 @@ remove_tempfile()
 trap remove_tempfile EXIT
 
 # run checks
-bash > "$NOMD_CHECK_RESULTS" <<EOF
-source check/*.check
+bash > "$NOMD_CHECK_RESULTS" <<'EOF'
+for CHECK in check/*.check ; do
+  source "$CHECK"
+done
 if [ -e check.local ]; then
   source check.local
 else
@@ -24,8 +26,10 @@ EOF
 
 # run notifications
 export NOMD_CHECK_RESULTS
-bash <<EOF
-source notify/*.notify
+bash <<'EOF'
+for NOTIFY in notify/*.notify; do
+  source "$NOTIFY"
+done
 if [ -e notify.local ]; then
   source notify.local
 else
