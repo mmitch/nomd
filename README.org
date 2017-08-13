@@ -36,7 +36,7 @@ Specifically, nomd is no omd.
 - [X] provide default configuration, use local configuration instead if available
 - [ ] pass all nomd commandline arguments to checkers and notifications
   - maximum flexibility in local scripts
-- [ ] convenience variables for notifications
+- [X] convenience variables for notifications
   - count of all severities, highest severity
 - [ ] wrappers for scripts in other languages
 - [ ] support local configuration with git branches
@@ -77,9 +77,14 @@ where
 
 *** notifications
 
-A notification is called with the environment variable
-~NOMD_CHECK_RESULTS~ pointing to a file with the complete results of
-the preceding checks.  See [[checks]] for the file format description.
+Notifications are called with these environment variables set:
+
+- NOMD_CHECK_RESULTS :: pointing to a file with the complete results of
+the preceding checks
+- NOMD_CRIT_COUNT :: number of critical check results
+- NOMD_WARN_COUNT :: number of warning check results
+- NOMD_INFO_COUNT :: number of informational check results
+- NOMD_HIGHEST_SEVERITY :: either ~C~, ~W~ or ~I~ depending on the worst check result
 
 ** things for thoughts
 

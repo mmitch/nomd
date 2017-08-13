@@ -32,8 +32,22 @@ while read LINE; do
     echo "C:nomd_checks:$LINE"
 done < "$NOMD_CHECK_STDERR" >> "$NOMD_CHECK_RESULTS"
 
+# prepare some variables
+NOMD_CRIT_COUNT=$(grep -c ^C "$NOMD_CHECK_RESULTS" || true)
+NOMD_WARN_COUNT=$(grep -c ^W "$NOMD_CHECK_RESULTS" || true)
+NOMD_INFO_COUNT=$(grep -c ^I "$NOMD_CHECK_RESULTS" || true)
+if [ $NOMD_CRIT_COUNT -gt 0 ]; then
+    NOMD_HIGHEST_SEVERITY=C
+elif [ $NOMD_WARN_COUNT -gt 0 ]; then
+    NOMD_HIGHEST_SEVERITY=W
+else
+    NOMD_HIGHEST_SEVERITY=I
+fi
+
 # run notifications
 export NOMD_CHECK_RESULTS
+export NOMD_CRIT_COUNT NOMD_WARN_COUNT NOMD_INFO_COUNT
+export NOMD_HIGHEST_SEVERITY
 bash 2> "$NOMD_NOTIFY_STDERR" <<'EOF'
 for NOTIFY in notify/*.notify; do
   source "$NOTIFY"
