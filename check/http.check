@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# check http status code
+# parameters:
+# $1 URL to connect to
+# $2 expected status code
+check_http_status()
+{
+    # receive parameters and set defaults
+    local URL="${1:-http://www.example.com/}"
+    local EXPECTED_STATUS="${2:-200}" 
+
+    # this uses HEAD from Perl LWP
+    # TODO: use wget/curl if available
+    local STATUS DUMMY
+    read STATUS DUMMY <<< $(HEAD "$URL")
+    if [ "$STATUS" != "$EXPECTED_STATUS" ]; then
+	echo "C:http_status:$STATUS != $EXPECTED_STATUS on $URL"
+    else
+	echo "I:http_status:$STATUS as expected on $URL"
+    fi
+}
