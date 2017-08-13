@@ -2,38 +2,51 @@
 set -e
 
 # set up temporary file
-NOMD_CHECK_RESULTS="$(mktemp --tmpdir nomd.check_results.XXXXXXXX)"
+NOMD_TEMP_DIR="$(mktemp -d --tmpdir nomd.XXXXXXXX)"
+NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"
+NOMD_CHECK_STDERR="$NOMD_TEMP_DIR/check_errors"
+NOMD_NOTIFY_STDERR="$NOMD_TEMP_DIR/notify_errors"
 
 # autoclean tempfile on exit or error
 remove_tempfile()
 {
-    rm "$NOMD_CHECK_RESULTS"
+    rm -r "$NOMD_TEMP_DIR"
 }
 trap remove_tempfile EXIT
 
 # run checks
-bash > "$NOMD_CHECK_RESULTS" <<'EOF'
+bash > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR" <<'EOF'
 for CHECK in check/*.check ; do
   source "$CHECK"
 done
 if [ -e check.local ]; then
   source check.local
 else
-  echo 'I:nomd:no check.local found, using check.default instead'
+  echo 'I:nomd_checks:no check.local found, using check.default instead'
   source check.default
 fi
 EOF
 
+# append meta errors from checks
+while read LINE; do
+    echo "C:nomd_checks:$LINE"
+done < "$NOMD_CHECK_STDERR" >> "$NOMD_CHECK_RESULTS"
+
 # run notifications
 export NOMD_CHECK_RESULTS
-bash <<'EOF'
+bash 2> "$NOMD_NOTIFY_STDERR" <<'EOF'
 for NOTIFY in notify/*.notify; do
   source "$NOTIFY"
 done
 if [ -e notify.local ]; then
   source notify.local
 else
-  echo 'I:nomd:no notify.local found, using notify.default instead' >> "$NOMD_CHECK_RESULTS"
+  echo 'I:nomd_notify:no notify.local found, using notify.default instead' >> "$NOMD_CHECK_RESULTS"
   source notify.default
 fi
 EOF
+
+# error out if errors occured
+if [ -s "$NOMD_CHECK_STDERR" -o -s "$NOMD_NOTIFY_STDERR" ]; then
+    exit 1
+fi
