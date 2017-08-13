@@ -6,6 +6,8 @@
 # $2 expected status code
 check_http_status()
 {
+    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
+
     # receive parameters and set defaults
     local URL="${1:-http://www.example.com/}"
     local EXPECTED_STATUS="${2:-200}" 
@@ -26,6 +28,8 @@ check_http_status()
 # $2 regexp of expected content
 check_http_content()
 {
+    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
+
     # receive parameters and set defaults
     local URL="${1:-http://www.example.com/}"
     local EXPECTED_RE="${2:-Example Domain}" 
@@ -48,6 +52,10 @@ _determine_http_toolset()
 	CHECK_HTTP_TOOLSET=curl
     elif which HEAD GET >/dev/null; then
 	CHECK_HTTP_TOOLSET=lwp
+    fi
+
+    if [ $CHECK_HTTP_TOOLSET ]; then
+	echo "I:http:toolset $CHECK_HTTP_TOOLSET selected"
     else
 	echo 'C:http:no suitable toolset found (wget/curl/LWP)'
     fi
@@ -56,8 +64,6 @@ _determine_http_toolset()
 _get_http_status()
 {
     local URL="$1"
-
-    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
 
     case $CHECK_HTTP_TOOLSET in
 	wget)
@@ -81,8 +87,6 @@ _get_http_status()
 _get_http_content()
 {
     local URL="$1"
-
-    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
 
     case $CHECK_HTTP_TOOLSET in
 	wget)
