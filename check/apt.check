@@ -10,7 +10,7 @@ check_apt()
 
     # count pending updates
     local COUNT_WARN=$(_get_apt_updatables | wc -l)
-    local COUNT_CRIT=$(_get_apt_updatables | grep -E "$CRIT_RE" | wc -l)
+    local COUNT_CRIT=$(_get_apt_updatables | grep -c -E "$CRIT_RE" || true)
 
     # output
     if [ $COUNT_CRIT -gt 0 ]; then
