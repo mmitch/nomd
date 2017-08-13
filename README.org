@@ -15,23 +15,41 @@ Specifically, nomd is no omd.
 
 ** feature fahrplan
 
-- [-] [1/7] plugin architecture for checks
+- [-] [1/9] plugin architecture for checks
   - [X] load
   - [ ] diskfree
+    - ?? configure by stdin
   - [ ] memfree
   - [ ] tcp connect
   - [ ] tcp connect with content check
   - [ ] http response code
   - [ ] http content check
-- [-] [1/4] plugin architecture for notifications
+  - [ ] apt available updates
+  - [ ] ?? check_mk wrapper
+- [-] [1/5] plugin architecture for notifications
   - [ ] mail
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
   - [X] dbus/notify-send
+  - [ ] terminal output
 - [X] main configuration file is plain bash and is simply run
+- [ ] provide default configuration, use local configuration instead if available
+- [ ] pass all nomd commandline arguments to checkers and notifications
+  - maximum flexibility in local scripts
+- [ ] convenience variables for notifications
+  - count of all severities, highest severity
 - [ ] wrappers for scripts in other languages
 - [ ] support local configuration with git branches
 - [ ] add copyright notices, project homepage and other boring stuff
+- [ ] dependency handling
+  - document dependencies per helper
+  - global fetch and display
+- [ ] generate documentation
+  - describe methods and parameters per helper
+  - global fetch and display
+- [ ] describe parameter handling
+  - all helpers should provide sensible defaults
+  - call without parameters should be possible
 
 ** instructions
 
@@ -74,3 +92,4 @@ the preceding checks.  See [[checks]] for the file format description.
   automatically detects the name of the current check
 - switch README from Org to Markdown?
   - Org is cooler, but the Github rendering is slightly sucky
+- add a notification that mails the local config/settings?
