@@ -14,12 +14,22 @@ trap remove_tempfile EXIT
 # run checks
 bash > "$NOMD_CHECK_RESULTS" <<EOF
 source check/*.check
-source check.config
+if [ -e check.local ]; then
+  source check.local
+else
+  echo 'I:nomd:no check.local found, using check.default instead'
+  source check.default
+fi
 EOF
 
 # run notifications
 export NOMD_CHECK_RESULTS
 bash <<EOF
 source notify/*.notify
-source notify.config
+if [ -e notify.local ]; then
+  source notify.local
+else
+  echo 'I:nomd:no notify.local found, using notify.default instead' >> "$NOMD_CHECK_RESULTS"
+  source notify.default
+fi
 EOF

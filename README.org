@@ -33,7 +33,7 @@ Specifically, nomd is no omd.
   - [X] dbus/notify-send
   - [ ] terminal output
 - [X] main configuration file is plain bash and is simply run
-- [ ] provide default configuration, use local configuration instead if available
+- [X] provide default configuration, use local configuration instead if available
 - [ ] pass all nomd commandline arguments to checkers and notifications
   - maximum flexibility in local scripts
 - [ ] convenience variables for notifications
@@ -53,8 +53,12 @@ Specifically, nomd is no omd.
 
 ** instructions
 
-- edit ~check.config~ to contain your desired checks
-- edit ~notify.config~ to contain your desired notifications
+- run ~nomd~
+
+*** configuration
+
+- copy ~check.default~ to ~check.local~ and edit to your needs
+- copy ~notify.default~ to ~notify.local~ and edit to your needs
 - run ~nomd~
 
 ** protocol
