@@ -15,17 +15,17 @@ remove_tempfile()
 trap remove_tempfile EXIT
 
 # run checks
-bash > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR" <<'EOF'
-for CHECK in check/*.check ; do
-  source "$CHECK"
-done
-if [ -e check.local ]; then
-  source check.local
-else
-  echo 'I:nomd_checks:no check.local found, using check.default instead'
-  source check.default
-fi
-EOF
+(
+    for CHECK in check/*.check ; do
+	source "$CHECK"
+    done
+    if [ -e check.local ]; then
+	source check.local
+    else
+	echo 'I:nomd_checks:no check.local found, using check.default instead'
+	source check.default
+    fi
+) > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR"
 
 # append meta errors from checks
 while read LINE; do
@@ -45,20 +45,17 @@ else
 fi
 
 # run notifications
-export NOMD_CHECK_RESULTS
-export NOMD_CRIT_COUNT NOMD_WARN_COUNT NOMD_INFO_COUNT
-export NOMD_HIGHEST_SEVERITY
-bash 2> "$NOMD_NOTIFY_STDERR" <<'EOF'
-for NOTIFY in notify/*.notify; do
-  source "$NOTIFY"
-done
-if [ -e notify.local ]; then
-  source notify.local
-else
-  echo 'I:nomd_notify:no notify.local found, using notify.default instead' >> "$NOMD_CHECK_RESULTS"
-  source notify.default
-fi
-EOF
+(
+    for NOTIFY in notify/*.notify; do
+	source "$NOTIFY"
+    done
+    if [ -e notify.local ]; then
+	source notify.local
+    else
+	echo 'I:nomd_notify:no notify.local found, using notify.default instead' >> "$NOMD_CHECK_RESULTS"
+	source notify.default
+    fi
+) 2> "$NOMD_NOTIFY_STDERR"
 
 # error out if errors occured
 if [ -s "$NOMD_CHECK_STDERR" -o -s "$NOMD_NOTIFY_STDERR" ]; then

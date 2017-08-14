@@ -34,7 +34,7 @@ Specifically, nomd is no omd.
   - [X] terminal output
 - [X] main configuration file is plain bash and is simply run
 - [X] provide default configuration, use local configuration instead if available
-- [ ] pass all nomd commandline arguments to checkers and notifications
+- [X] pass all nomd commandline arguments to checkers and notifications
   - maximum flexibility in local scripts
 - [X] convenience variables for notifications
   - count of all severities, highest severity
