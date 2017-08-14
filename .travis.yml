@@ -7,6 +7,12 @@ addons:
       - libfilesys-df-perl
       - libsys-filesystem-perl
 
+perl:
+  # we don't really care about the Perl version, but for the packages installed
+  # via apt to be used, we need to use the Ubuntu Perl
+  - "5.18"
+
+# install any still missing Perl dependencies
 install: make install-perl-deps
 
 script: ./nomd
