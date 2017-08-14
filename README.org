@@ -26,8 +26,8 @@ Specifically, nomd is no omd.
   - [X] http content check
   - [X] apt available updates
   - [ ] ?? check_mk wrapper
-- [-] [2/5] plugin architecture for notifications
-  - [ ] mail
+- [-] [3/5] plugin architecture for notifications
+  - [X] mail
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [ ] pushbullet
   - [X] dbus/notify-send

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# notify via email (plain text)
+# parameters:
+# $1: regexp to filter notifications
+# $2: recipient
+# $3: mail subject
+notify_mail()
+{
+    # map severities to longtext
+    # needs bash 4.0 associative arrays
+    # TODO: pull this up to the main script
+    declare -A SEVERITY
+    SEVERITY=( [C]='[CRIT]' [W]='[WARN]' [I]='[INFO]' )
+    
+    # receive parameters and set defaults
+    local FILTER=${1:-^[CW]}
+    local MAILTO=${2:-root@localhost}
+    local SUBJECT=${3:-${SEVERITY[$NOMD_HIGHEST_SEVERITY]} nomd issues on $HOSTNAME}
+
+    # check if there are messages to send
+    grep -E "$FILTER" "$NOMD_CHECK_RESULTS" >/dev/null || return 0
+    
+    # send selected messages
+    (
+	echo nomd run at $(date)
+	echo
+	echo summary: $NOMD_CRIT_COUNT crit, $NOMD_WARN_COUNT warn, $NOMD_INFO_COUNT info
+	echo
+	grep -E "$FILTER" "$NOMD_CHECK_RESULTS"
+    ) | mail -s "$SUBJECT" "$MAILTO"
+}
