@@ -54,13 +54,22 @@ Specifically, nomd is no omd.
 
 ** instructions
 
-- run ~nomd~
+*** installation
+
+- run ~make check-deps~ to see if all dependencies are installed
+  - if Perl modules are missing, you can install them manually
+    (eg. via your distribution packages to get updates) or, if you
+    use a local ~cpanm~ installation, just run ~make install-perl-deps~
+
+*** execution
+
+- run ~nomd~ (alternatively run ~make~)
 
 *** configuration
 
 - copy ~check.default~ to ~check.local~ and edit to your needs
 - copy ~notify.default~ to ~notify.local~ and edit to your needs
-- run ~nomd~
+- run ~nomd~ (alternatively run ~make~)
 
 ** protocol
 

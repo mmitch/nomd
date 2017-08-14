@@ -1,4 +1,4 @@
 language: perl
-install: true
+install: make install-perl-deps
 script: ./nomd
 
