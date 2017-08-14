@@ -17,8 +17,9 @@ Specifically, nomd is no omd.
 
 - [-] [4/9] plugin architecture for checks
   - [X] load
-  - [ ] diskfree
-    - ?? configure by stdin
+  - [-] diskfree
+    - [X] basic operation
+    - [ ] configure by stdin
   - [ ] memfree
   - [ ] tcp connect
   - [ ] tcp connect with content check

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# check free disk space
+check_diskfree()
+{
+    perl check/wrapper/diskfree.pl
+}

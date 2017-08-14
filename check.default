@@ -1,6 +1,9 @@
 # check system load
 check_load
 
+# check free diskspace
+check_diskspace
+
 # check internet connectivity ;-)
 check_http_status
 check_http_content
