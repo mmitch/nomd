@@ -5,8 +5,6 @@ use warnings;
 use Filesys::Df;
 use Sys::Filesystem;
 
-use Data::Dumper;
-
 foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
 
     my $df = df($mountpoint, 1024);
