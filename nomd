@@ -7,12 +7,20 @@ NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"
 NOMD_CHECK_STDERR="$NOMD_TEMP_DIR/check_errors"
 NOMD_NOTIFY_STDERR="$NOMD_TEMP_DIR/notify_errors"
 
-# autoclean tempfile on exit or error
-remove_tempfile()
+on_exit_or_error()
 {
+    # reprint captured errors on stderr
+    if [ -s "$NOMD_CHECK_STDERR" ]; then
+	cat "$NOMD_CHECK_STDERR" >&2
+    fi
+    if [ -s "$NOMD_NOTIFY_STDERR" ]; then
+	cat "$NOMD_NOTIFY_STDERR" >&2
+    fi
+    
+    # autoclean tempfile
     rm -r "$NOMD_TEMP_DIR"
 }
-trap remove_tempfile EXIT
+trap on_exit_or_error EXIT
 
 # run checks
 (
@@ -56,8 +64,3 @@ fi
 	source notify.default
     fi
 ) 2> "$NOMD_NOTIFY_STDERR"
-
-# error out if errors occured
-if [ -s "$NOMD_CHECK_STDERR" -o -s "$NOMD_NOTIFY_STDERR" ]; then
-    exit 1
-fi
