@@ -6,7 +6,7 @@
 notify_dbus()
 {
     # receive parameters and set defaults
-    local FILTER=${1:-:}
+    local FILTER=${1:-^[CW]}
 
     # map severities to urgencies
     # needs bash 4.0 associative arrays
