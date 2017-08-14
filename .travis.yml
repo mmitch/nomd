@@ -1,4 +1,12 @@
 language: perl
-install: make install-perl-deps
-script: ./nomd
 
+addons:
+  apt:
+    packages:
+      # it's faster to install the binaries than to download and build the modules
+      - libfilesys-df-perl
+      - libsys-filesystem-perl
+
+install: make install-perl-deps
+
+script: ./nomd
