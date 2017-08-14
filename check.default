@@ -2,7 +2,7 @@
 check_load
 
 # check free diskspace
-check_diskspace
+check_diskfree
 
 # check internet connectivity ;-)
 check_http_status
