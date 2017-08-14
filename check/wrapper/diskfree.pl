@@ -5,8 +5,19 @@ use warnings;
 use Filesys::Df;
 use Sys::Filesystem;
 
-foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
+my @skip;
 
+while (my $line = <STDIN>) {
+    chomp $line;
+    push @skip, qr($line);
+}
+
+MOUNTPOINT: foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
+     
+    foreach my $skip (@skip) {
+	next MOUNTPOINT if $mountpoint =~ /$skip/;
+    }
+     
     my $df = df($mountpoint, 1024);
     next unless defined $df;
 

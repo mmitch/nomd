@@ -1,7 +1,13 @@
 #!/bin/bash
 
 # check free disk space
+# stdin may contain mointpoints to skip, one regexp per line
 check_diskfree()
 {
+    if [ -t 0 ]; then
+	# stdin is terminal, so no stdin given
+	# -> provide empty stdin, otherwise we will wait for terminal input...
+	exec 0</dev/null
+    fi
     perl check/wrapper/diskfree.pl
 }
