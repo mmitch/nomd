@@ -1,11 +1,17 @@
+# enable spinner
+spinner_start
+
 # check system load
 check_load
 
 # check free diskspace
 check_diskfree
 
-# long localhost :-)
+# ping localhost :-)
 check_ping_alive
+
+# check if ./nomd exists :-)
+check_file_exists
 
 # check internet connectivity ;-)
 check_http_status
@@ -15,3 +21,5 @@ check_http_content
 # the regexp tries to match both Ubuntu and Debian security sources
 which apt >/dev/null && check_apt '(/updates|-security)'
 
+# remove spinner
+spinner_stop

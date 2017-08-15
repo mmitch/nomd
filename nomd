@@ -7,6 +7,7 @@ NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"
 NOMD_CHECK_STDERR="$NOMD_TEMP_DIR/check_errors"
 NOMD_NOTIFY_STDERR="$NOMD_TEMP_DIR/notify_errors"
 
+# clean up on exit
 on_exit_or_error()
 {
     # reprint captured errors on stderr
@@ -27,13 +28,19 @@ trap on_exit_or_error EXIT
     for CHECK in check/*.check ; do
 	source "$CHECK"
     done
+    for TOOL in tool/*.tool ; do
+	source "$TOOL"
+    done
     if [ -e check.local ]; then
 	source check.local
     else
 	echo 'I:nomd_checks:no check.local found, using check.default instead'
 	source check.default
     fi
-) > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR"
+
+    # remove progress bar if interactive
+
+) 3>&1 > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR" 
 
 # append meta errors from checks
 while read LINE; do
