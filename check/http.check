@@ -35,9 +35,9 @@ check_http_content()
 
     # this uses GET from Perl LWP
     if _get_http_content "$URL" | grep -q -E "$EXPECTED_RE"; then
-	echo "I:http_status:content ok on $URL ($EXPECTED_RE)"
+	echo "I:http_content:content ok on $URL ($EXPECTED_RE)"
     else
-	echo "C:http_status:expected content not found in $URL: $EXPECTED_RE"
+	echo "C:http_content:expected content not found in $URL: $EXPECTED_RE"
     fi
 }
 
