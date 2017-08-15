@@ -9,7 +9,7 @@ Specifically, nomd is no omd.
 - [ ] might be usable for somebody else
 - [ ] detected a real-world problem
 - [ ] works for me on at least three machines
-- [ ] basic features implemented
+- [X] basic features implemented
 - [X] a wild first code appears!
 - [X] some vague ideas and rumors
 

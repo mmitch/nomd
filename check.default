@@ -4,6 +4,9 @@ check_load
 # check free diskspace
 check_diskfree
 
+# long localhost :-)
+check_ping_alive
+
 # check internet connectivity ;-)
 check_http_status
 check_http_content
