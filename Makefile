@@ -1,12 +1,22 @@
 PERL_DEPS    := .perl-deps
 PERL_SOURCES := $(wildcard */wrapper/*.pl)
 
+BASH_SOURCES := nomd check.default notify.default $(wildcard check/*.check) $(wildcard notify/*.notify) $(wildcard tool/*.tool)
+
 run:
 	./nomd
 
 clean:
 	rm -f $(PERL_DEPS)
 	rm -f *~ */*~ */*/*~
+
+test-perl: $(PERL_SOURCES)
+	@for FILE in $(PERL_SOURCES); do perl -c "$$FILE" || exit 1; done
+
+test-bash: $(PERL_SOURCES)
+	@for FILE in $(BASH_SOURCES); do bash -n "$$FILE" && echo "$$FILE syntax OK" || exit 1; done
+
+test: test-perl test-bash
 
 $(PERL_DEPS): $(PERL_SOURCES)
 	@grep ^use $(PERL_SOURCES) | awk '{print $$2}' | sed 's/;$$//' | egrep -v '^(strict|warnings)$$' | sort | uniq > $@

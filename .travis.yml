@@ -6,4 +6,4 @@ perl:
 
 install: make install-perl-deps
 
-script: ./nomd
+script: make test
