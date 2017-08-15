@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# check if one or more files exist
+# parameters:
+# $* files to check (supports non-quoted shell wildcards in call)
+check_file_exists()
+{
+    _file_existance file_exists I C "$@"
+}
+
+# check if one or more files don't exist
+# parameters:
+# $* files to check (supports non-quoted shell wildcards in call)
+check_file_missing()
+{
+    _file_existance file_missing C I "$@"
+}
+
+_file_existance()
+{
+    # receive parameters
+    local CHECK_NAME=$1
+    local EXISTING_STATUS=$2
+    local MISSING_STATUS=$3
+    shift 3
+    
+    # set defaults
+    if [ -z "$*" ]; then
+	set -- nomd
+    fi
+
+    # check files
+    for FILE in "$@"; do
+	if [ -e "$FILE" ]; then
+	    echo "${EXISTING_STATUS}:${CHECK_NAME}:$FILE exists"
+	else
+	    echo "${MISSING_STATUS}:${CHECK_NAME}:$FILE is missing"
+	fi
+    done
+}
+
+# check if one or more files contain certain data
+# parameters:
+# $1 regular expression of file content
+# $* files to check (supports non-quoted shell wildcards in call)
+check_file_contains()
+{
+    # receive parameters and set defaults
+    REGEXP=${1:-.}
+    shift 1
+    if [ -z "$*" ]; then
+	set -- nomd
+    fi
+
+    # check files
+    for FILE in "$@"; do
+	if grep -q -E "$REGEXP" "$FILE"; then
+	    echo "I:file_contains:$FILE contains $REGEXP"
+	else
+	    echo "C:file_contains:$FILE does not contain $REGEXP"
+	fi
+    done
+}
