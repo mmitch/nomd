@@ -90,8 +90,9 @@ check_file_newer()
     esac
 	
     # check files
-    if find "$DIR" -maxdepth 1 -type f -mmin -$MINUTES 1>/dev/null 2>/dev/null; then
-	echo "I:file_newer:$DIR contains file(s) newer than $AMOUNT$TYPE"
+    FOUND=$(find "$DIR" -maxdepth 1 -type f -mmin -$MINUTES 2>/dev/null | wc -l)
+    if [ $FOUND -gt 0 ]; then
+	echo "I:file_newer:$DIR contains $FOUND file(s) newer than $AMOUNT$TYPE"
     else
 	echo "C:file_newer:$DIR contains no file newer than $AMOUNT$TYPE"
     fi
