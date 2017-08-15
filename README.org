@@ -15,7 +15,7 @@ Specifically, nomd is no omd.
 
 ** feature fahrplan
 
-- [-] [5/10] plugin architecture for checks
+- [-] [6/10] plugin architecture for checks
   - [X] load
   - [X] diskfree
     - [X] basic operation
@@ -23,11 +23,11 @@ Specifically, nomd is no omd.
   - [ ] memfree
   - [ ] tcp connect
   - [ ] tcp connect with content check
-  - [-] file tests
+  - [X] file tests
     - [X] exists
     - [X] does not exist
     - [X] contains
-    - [ ] younger than
+    - [X] younger than
     - [X] wildcards
   - [X] http response code
   - [X] http content check

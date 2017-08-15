@@ -10,8 +10,13 @@ check_diskfree
 # ping localhost :-)
 check_ping_alive
 
-# check if ./nomd exists :-)
+# some rather random file checks:
+# check if ./nomd exists
 check_file_exists
+# check if ./nomd~ does not exist
+check_file_missing nomd~
+# check if directory is current
+check_file_newer
 
 # check internet connectivity ;-)
 check_http_status

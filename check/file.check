@@ -2,7 +2,7 @@
 
 # check if one or more files exist
 # parameters:
-# $* files to check (supports non-quoted shell wildcards in call)
+# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_exists()
 {
     _file_existance file_exists I C "$@"
@@ -10,7 +10,7 @@ check_file_exists()
 
 # check if one or more files don't exist
 # parameters:
-# $* files to check (supports non-quoted shell wildcards in call)
+# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_missing()
 {
     _file_existance file_missing C I "$@"
@@ -42,7 +42,7 @@ _file_existance()
 # check if one or more files contain certain data
 # parameters:
 # $1 regular expression of file content
-# $* files to check (supports non-quoted shell wildcards in call)
+# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_contains()
 {
     # receive parameters and set defaults
@@ -60,4 +60,39 @@ check_file_contains()
 	    echo "C:file_contains:$FILE does not contain $REGEXP"
 	fi
     done
+}
+
+# check a given directory (no recursion) for a file that has been
+# modified in the given interval (at least that long ago)
+# parameters:
+# $1 the directory to check
+# $2 time interval numeric: eg. 30 for 30 minutes
+# $3 time interval type: eg. m for minutes
+#    available: m=minutes, h=hours, d=days
+check_file_newer()
+{
+    # receive parameters and set defaults
+    DIR=${1:-.}
+    AMOUNT=${2:-1}
+    TYPE=${3:-d}
+
+    # calculate timespan
+    case $TYPE in
+	m)
+	    MINUTES=$AMOUNT
+	    ;;
+	h)
+	    MINUTES=$(( AMOUNT * 60 ))
+	    ;;
+	d)
+	    MINUTES=$(( AMOUNT * 60 * 24 ))
+	    ;;
+    esac
+	
+    # check files
+    if find "$DIR" -maxdepth 1 -type f -mmin -$MINUTES 1>/dev/null 2>/dev/null; then
+	echo "I:file_newer:$DIR contains file(s) newer than $AMOUNT$TYPE"
+    else
+	echo "C:file_newer:$DIR contains no file newer than $AMOUNT$TYPE"
+    fi
 }
