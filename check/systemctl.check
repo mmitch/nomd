@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# check systemctl for failed units
+check_systemctl()
+{
+    # again: bash 4 needed
+    declare -a UNITS
+    readarray -t UNITS < <(systemctl --full | grep failed | cut -d\  -f 2)
+
+    # output
+    if [ ${#UNITS[@]} -gt 0 ]; then
+	local UNIT
+	for UNIT in "${UNITS[@]}"; do
+	    echo "C:systemctl:failed unit $UNIT"
+	done
+    else
+	echo "I:systemctl:no failed units"
+    fi
+}

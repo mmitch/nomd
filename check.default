@@ -22,6 +22,9 @@ check_file_newer
 check_http_status
 check_http_content
 
+# check systemctl (if available) for failed units
+which systemctl >/dev/null && check_systemctl
+
 # run check_apt only on systems that have apt available
 # the regexp tries to match both Ubuntu and Debian security sources
 which apt >/dev/null && check_apt '(/updates|-security)'
