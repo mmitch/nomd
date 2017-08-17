@@ -12,7 +12,7 @@ check_http_status()
     local URL="${1:-http://www.example.com/}"
     local EXPECTED_STATUS="${2:-200}" 
 
-    # this uses HEAD from Perl LWP
+    # get status
     local STATUS=$(_get_http_status "$URL")
     if [ "$STATUS" != "$EXPECTED_STATUS" ]; then
 	echo "C:http_status:$STATUS != $EXPECTED_STATUS on $URL"
@@ -33,7 +33,7 @@ check_http_content()
     local URL="${1:-http://www.example.com/}"
     local EXPECTED_RE="${2:-Example Domain}" 
 
-    # this uses GET from Perl LWP
+    # get and check content
     if _get_http_content "$URL" | grep -q -E "$EXPECTED_RE"; then
 	echo "I:http_content:content ok on $URL ($EXPECTED_RE)"
     else
