@@ -15,7 +15,7 @@ Specifically, nomd is no omd.
 
 ** feature fahrplan
 
-- [-] [6/10] plugin architecture for checks
+- [-] [6/9] plugin architecture for checks
   - [X] load
   - [X] diskfree
     - [X] basic operation
@@ -32,11 +32,9 @@ Specifically, nomd is no omd.
   - [X] http response code
   - [X] http content check
   - [X] apt available updates
-  - [ ] ?? check_mk wrapper
-- [-] [3/5] plugin architecture for notifications
+- [-] [3/4] plugin architecture for notifications
   - [X] mail
   - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
-  - [ ] pushbullet
   - [X] dbus/notify-send
   - [X] terminal output
 - [X] main configuration file is plain bash and is simply run
@@ -104,17 +102,12 @@ the preceding checks
 
 ** things for thoughts
 
-- configuration
-  - simple configurations can be done directly, but what about
-    - lists
-    - even more complicated things
-  - for example diskfree plugin
-    - skip some mounts
-    - change warning thresholds for others
-  - central configuration file?
-  - per module configuration file?
 - convenience function for writing the protocol lines that
   automatically detects the name of the current check
 - switch README from Org to Markdown?
   - Org is cooler, but the Github rendering is slightly sucky
 - add a notification that mails the local config/settings?
+- checks
+  - check_mk wrapper
+- notifications
+  - pushbullet
