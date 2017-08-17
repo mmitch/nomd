@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# check tcp connection (open port)
+# parameters:
+# $1 host to connect to
+# $2 port to connect to
+check_tcp_connect()
+{
+    # receive parameters and set defaults
+    local HOST="${1:-localhost}"
+    local PORT="${2:-9}" 
+
+    # check
+    if </dev/tcp/$HOST/$PORT; then
+	echo "I:tcp_connect:connect on $HOST:$PORT"
+    else
+	echo "C:tcp_connect:no connect on $HOST:$PORT"
+    fi 2>/dev/null
+}
+
+# check initial data on tcp connection
+# parameters:
+# $1 host to connect to
+# $2 port to connect to
+# $3 regexp of expected content
+check_tcp_banner()
+{
+    # receive parameters and set defaults
+    local HOST="${1:-localhost}"
+    local PORT="${2:-25}"
+    local EXPECTED_RE="${3:-^220}" 
+
+    # this needs timeout
+    # the trick is that the redirections are processed in order:
+    # $TEMPFILE is only created if the TCP connect was successful
+    local TEMPFILE="$NOMD_TEMP_DIR/check_tcp_banner"
+    timeout 3 cat 2>/dev/null </dev/tcp/$HOST/$PORT >"$TEMPFILE" || true
+    if [ -e "$TEMPFILE" ]; then
+	if grep -q -E "$EXPECTED_RE" "$TEMPFILE"; then
+	    echo "I:tcp_banner:content ok on $HOST:$PORT ($EXPECTED_RE)"
+	else
+	    echo "C:tcp_banner:expected banner not found at $HOST:$PORT ($EXPECTED_RE)"
+	fi
+	rm "$TEMPFILE"
+    else
+	echo "C:tcp_banner:no connect on $HOST:$PORT ($EXPECTED_RE)"
+    fi
+}

@@ -10,6 +10,9 @@ check_diskfree
 # ping localhost :-)
 check_ping_alive
 
+# tcp connect to local discard service
+check_tcp_connect
+
 # some rather random file checks:
 # check if ./nomd exists
 check_file_exists
