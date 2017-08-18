@@ -1,5 +1,5 @@
 PERL_DEPS     := .perl-deps
-PERL_SOURCES  := $(wildcard */wrapper/*.pl) $(wildcard tool/*.pl)
+PERL_SOURCES  := $(wildcard */wrapper/*.pl) nomdoc
 
 CHECKS        := $(wildcard check/*.check)
 NOTIFICATIONS := $(wildcard notify/*.notify) 
@@ -33,12 +33,3 @@ install-perl-deps: $(PERL_DEPS)
 	cpanm --skip-satisfied < $(PERL_DEPS)
 
 check-deps: check-perl-deps
-
-doc:
-	@tool/doccer.pl $(CHECKS) $(NOTIFICATIONS)
-
-doc-check:
-	@tool/doccer.pl $(CHECKS)
-
-doc-notify:
-	@tool/doccer.pl $(NOTIFICATIONS)
