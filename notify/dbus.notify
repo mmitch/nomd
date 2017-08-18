@@ -9,7 +9,6 @@ notify_dbus()
     local FILTER=${1:-^[CW]}
 
     # map severities to urgencies
-    # needs bash 4.0 associative arrays
     declare -A URG
     URG=( [C]=critical [W]=normal [I]=low )
 

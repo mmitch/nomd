@@ -9,7 +9,6 @@ notify_stdout()
     local FILTER=${1:-:}
 
     # map severities to urgencies
-    # needs bash 4.0 associative arrays
     declare -A SEVERITY
     if tput sgr0 >/dev/null 2>&1; then
 	# colorize!

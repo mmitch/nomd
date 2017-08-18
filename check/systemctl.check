@@ -3,7 +3,7 @@
 check_systemctl()
 ##CHECKDSC check systemctl for failed units
 {
-    # again: bash 4 needed
+    # read output into array
     declare -a UNITS
     readarray -t UNITS < <(systemctl --full | grep failed | cut -d\  -f 2)
 
