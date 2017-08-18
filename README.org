@@ -7,20 +7,19 @@ Specifically, nomd is no omd.
 
 - [ ] I actually know of one other user
 - [ ] might be usable for somebody else
-- [ ] detected a real-world problem
-- [ ] works for me on at least three machines
+- [X] detected a real-world problem
+- [X] works for me on at least three machines
 - [X] basic features implemented
 - [X] a wild first code appears!
 - [X] some vague ideas and rumors
 
 ** feature fahrplan
 
-- [-] [8/9] plugin architecture for checks
+- [X] [8/8] plugin architecture for checks
   - [X] load
   - [X] diskfree
     - [X] basic operation
     - [X] configure by stdin
-  - [ ] memfree
   - [X] tcp connect
   - [X] tcp connect with content check
   - [X] file tests
@@ -32,9 +31,8 @@ Specifically, nomd is no omd.
   - [X] http response code
   - [X] http content check
   - [X] apt available updates
-- [-] [3/4] plugin architecture for notifications
+- [X] [3/3] plugin architecture for notifications
   - [X] mail
-  - [ ] [[https://github.com/mmitch/mitchscripts/blob/master/bash/notify.sh][my notification framework]]
   - [X] dbus/notify-send
   - [X] terminal output
 - [X] main configuration file is plain bash and is simply run
@@ -43,8 +41,8 @@ Specifically, nomd is no omd.
   - maximum flexibility in local scripts
 - [X] convenience variables for notifications
   - count of all severities, highest severity
-- [ ] wrappers for scripts in other languages
-- [ ] support local configuration with git branches
+- [X] wrappers for scripts in other languages
+- [X] support local configuration with git branches
 - [ ] add copyright notices, project homepage and other boring stuff
 - [ ] dependency handling
   - document dependencies per helper
@@ -109,5 +107,6 @@ the preceding checks
 - add a notification that mails the local config/settings?
 - checks
   - check_mk wrapper
+  - memfree - but what to check? memory? swap? both? warning/crit thresholds?
 - notifications
   - pushbullet
