@@ -1,7 +1,9 @@
-PERL_DEPS    := .perl-deps
-PERL_SOURCES := $(wildcard */wrapper/*.pl)
+PERL_DEPS     := .perl-deps
+PERL_SOURCES  := $(wildcard */wrapper/*.pl) $(wildcard tool/*.pl)
 
-BASH_SOURCES := nomd check.default notify.default $(wildcard check/*.check) $(wildcard notify/*.notify) $(wildcard tool/*.tool)
+CHECKS        := $(wildcard check/*.check)
+NOTIFICATIONS := $(wildcard notify/*.notify) 
+BASH_SOURCES  := nomd check.default notify.default $(wildcard tool/*.tool) $(CHECKS) $(NOTIFICATIONS)
 
 run:
 	./nomd
@@ -31,3 +33,12 @@ install-perl-deps: $(PERL_DEPS)
 	cpanm --skip-satisfied < $(PERL_DEPS)
 
 check-deps: check-perl-deps
+
+doc:
+	@tool/doccer.pl $(CHECKS) $(NOTIFICATIONS)
+
+doc-check:
+	@tool/doccer.pl $(CHECKS)
+
+doc-notify:
+	@tool/doccer.pl $(NOTIFICATIONS)

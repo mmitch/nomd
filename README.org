@@ -65,13 +65,17 @@ Specifically, nomd is no omd.
 
 *** execution
 
-- run ~nomd~ (alternatively run ~make~)
+- run ~nomd~ (alternatively run ~make~ or ~make run~)
 
 *** configuration
 
 - copy ~check.default~ to ~check.local~ and edit to your needs
 - copy ~notify.default~ to ~notify.local~ and edit to your needs
 - run ~nomd~ (alternatively run ~make~)
+
+*** documentation
+
+- to see a list of all available checks, run ~make doc~ or ~make doc-check~
 
 ** protocol
 
