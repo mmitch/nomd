@@ -113,5 +113,6 @@ the preceding checks
 - checks
   - check_mk wrapper
   - memfree - but what to check? memory? swap? both? warning/crit thresholds?
+  - ntpd checker
 - notifications
   - pushbullet
