@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# check systemctl for failed units
 check_systemctl()
+##CHECKDSC check systemctl for failed units
 {
     # again: bash 4 needed
     declare -a UNITS

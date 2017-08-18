@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# check free disk space
-# stdin may contain mointpoints to skip, one regexp per line
 check_diskfree()
+##CHECKDSC check free disk space
+#
+##PARMNAME stdin
+##PARMDESC mointpoints to skip, one regexp per line
+##PARMDFLT none
 {
     if [ -t 0 ]; then
 	# stdin is terminal, so no stdin given

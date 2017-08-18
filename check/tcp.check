@@ -1,10 +1,15 @@
 #!/bin/bash
 
-# check tcp connection (open port)
-# parameters:
-# $1 host to connect to
-# $2 port to connect to
 check_tcp_connect()
+##CHECKDSC check for open tcp port (attempt connection)
+#
+##PARMNAME $1
+##PARMDESC host to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 9 (discard)
 {
     # receive parameters and set defaults
     local HOST="${1:-localhost}"
@@ -18,12 +23,20 @@ check_tcp_connect()
     fi 2>/dev/null
 }
 
-# check initial data on tcp connection
-# parameters:
-# $1 host to connect to
-# $2 port to connect to
-# $3 regexp of expected content
 check_tcp_banner()
+##CHECKDSC check initial data on tcp connection
+#
+##PARMNAME $1
+##PARMDESC host to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 25 (smtp)
+#
+##PARMNAME $3
+##PARMDESC regexp of expected content
+##PARMDFLT ^220 (SMTP response code on succesful connect)
 {
     # receive parameters and set defaults
     local HOST="${1:-localhost}"

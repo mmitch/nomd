@@ -1,10 +1,15 @@
 #!/bin/bash
 
-# check http status code
-# parameters:
-# $1 URL to connect to
-# $2 expected status code
 check_http_status()
+##CHECKDSC check HTTP status code
+#
+##PARMNAME $1
+##PARMDESC URL to connect to
+##PARMDFLT http://www.example.com/
+#
+##PARMNAME $2
+##PARMDESC expected HTTP status code
+##PARMDFLT 200
 {
     [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
 
@@ -21,11 +26,16 @@ check_http_status()
     fi
 }
 
-# check http response content
-# parameters:
-# $1 URL to connect to
-# $2 regexp of expected content
 check_http_content()
+##CHECKDSC check HTTP response content
+#
+##PARMNAME $1
+##PARMDESC URL to connect to
+##PARMDFLT http://www.example.com/
+#
+##PARMNAME $2
+##PARMDESC regexp of expected content
+##PARMDFLT Example Domain
 {
     [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
 

@@ -1,14 +1,19 @@
 #!/bin/bash
 
-# check system load (15 min interval)
-# parameters:
-# $1 load THRESHOLD for CRITICAL
-# $2 load THRESHOLD for WARNING
 check_load()
+##CHECKDSC check system load (15 min interval)
+#
+##PARMNAME $1
+##PARMDESC threshold for critical load
+##PARMDFLT 8
+#
+##PARMNAME $2
+##PARMDESC threshold for load warning
+##PARMDFLT 7
 {
     # receive parameters and set defaults
     local CRITICAL="${1:-8}"
-    local WARNING="${2:-$CRITICAL}" 
+    local WARNING="${2:-7}"
     
     # get 15 minute average
     local LOAD1 LOAD5 LOAD15 UNDEF

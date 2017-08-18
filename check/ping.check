@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# check if a host is up via ICMP ping
-# parameters:
-# $1 host to ping
 check_ping_alive()
+##CHECKDSC check if a host is up via ICMP ping
+#
+##PARMNAME $1
+##PARMDESC host to ping
+##PARMDFLT localhost
 {
     # receive parameters and set defaults
     local HOST="${1:-localhost}"

@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# check if one or more files exist
-# parameters:
-# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_exists()
+##CHECKDSC check if one or more files exist
+#
+##PARMNAME $*
+##PARMDESC file(s) to check (supports non-quoted shell wildcards in call)
+##PARMDFLT nomd
 {
     _file_existance file_exists I C "$@"
 }
 
-# check if one or more files don't exist
-# parameters:
-# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_missing()
+##CHECKDSC check if one or more files don't exist
+#
+##PARMNAME $*
+##PARMDESC file(s) to check (supports non-quoted shell wildcards in call)
+##PARMDFLT nomd
 {
     _file_existance file_missing C I "$@"
 }
@@ -39,11 +43,18 @@ _file_existance()
     done
 }
 
-# check if one or more files contain certain data
+# 
 # parameters:
-# $1 regular expression of file content
-# $* file(s) to check (supports non-quoted shell wildcards in call)
 check_file_contains()
+##CHECKDSC check if one or more files contain certain data
+#
+##PARMNAME $1
+##PARMDESC regular expression of file content
+##PARMDFLT . (match any non-empty file)
+#
+##PARMNAME $*
+##PARMDESC file(s) to check (supports non-quoted shell wildcards in call)
+##PARMDFLT nomd
 {
     # receive parameters and set defaults
     REGEXP=${1:-.}
@@ -62,14 +73,21 @@ check_file_contains()
     done
 }
 
-# check a given directory (no recursion) for a file that has been
-# modified in the given interval (at least that long ago)
-# parameters:
-# $1 the directory to check
-# $2 time interval numeric: eg. 30 for 30 minutes
-# $3 time interval type: eg. m for minutes
-#    available: m=minutes, h=hours, d=days
 check_file_newer()
+##CHECKDSC check a given directory (no recursion) for a file that has been modified
+##CHECKDSC in the given interval (at least that long ago)
+#
+##PARMNAME $1
+##PARMDESC the directory to check
+##PARMDFLT . (current directory)
+#
+##PARMNAME $2
+##PARMDESC time interval numeric: eg. 30 for 30 minutes
+##PARMDFLT 1
+#
+##PARMNAME $3
+##PARMDESC time interval type: m=minutes, h=hours, d=days
+##PARMDFLT d
 {
     # receive parameters and set defaults
     DIR=${1:-.}

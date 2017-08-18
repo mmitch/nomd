@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# check pending apt updates (the needs a Debian based system, obviously)
-# parameters:
-# $1 regexp to select critical updates (possibly security related)
 check_apt()
+##CHECKDSC check pending apt updates (this needs a Debian based system, obviously)
+#
+##PARMNAME $1
+##PARMDESC regexp to select critical updates (possibly security related)
+##PARMDFLT . (mark every update as critical)
+#
 {
     # receive parameters and set defaults
     local CRIT_RE="${1:-.}"
