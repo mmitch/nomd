@@ -21,7 +21,7 @@ test-bash: $(PERL_SOURCES)
 test: test-perl test-bash
 
 $(PERL_DEPS): $(PERL_SOURCES)
-	@grep ^use $(PERL_SOURCES) | awk '{print $$2}' | sed 's/;$$//' | egrep -v '^(strict|warnings)$$' | sort | uniq > $@
+	@grep ^use $(PERL_SOURCES) | awk '{print $$2}' | sed 's/;$$//' | egrep -v '^(strict|warnings|v5)' | sort | uniq > $@
 
 show-perl-deps:	$(PERL_DEPS)
 	@cat $(PERL_DEPS)
