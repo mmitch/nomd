@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# notify via stdout (using colors if available)
-# parameters:
-# $1: regexp to filter notifications
 notify_stdout()
+##NOTYDESC notify via stdout, using colors if available
+#
+##PARMNAME $1
+##PARMDESC regexp to filter notifications
+##PARMDFLT : (match any check output)
 {
     # receive parameters and set defaults
     local FILTER=${1:-:}

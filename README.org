@@ -47,7 +47,7 @@ Specifically, nomd is no omd.
 - [ ] dependency handling
   - document dependencies per helper
   - global fetch and display
-- [ ] generate documentation
+- [X] generate documentation
   - describe methods and parameters per helper
   - global fetch and display
 - [ ] describe parameter handling
@@ -76,6 +76,7 @@ Specifically, nomd is no omd.
 *** documentation
 
 - to see a list of all available checks, run ~make doc~ or ~make doc-check~
+- to see a list of all available notifications, run ~make doc~ or ~make doc-notify~
 
 ** protocol
 

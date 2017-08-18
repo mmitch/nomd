@@ -1,11 +1,19 @@
 #!/bin/bash
 
-# notify via email (plain text)
-# parameters:
-# $1: regexp to filter notifications
-# $2: recipient
-# $3: mail subject
 notify_mail()
+##NOTYDESC notify via email (plain text)
+#
+##PARMNAME $1
+##PARMDESC regexp to filter notifications
+##PARMDFLT ^[CW] (only match criticals and warnings)
+#
+##PARMNAME $2
+##PARMDESC recipient
+##PARMDFLT root@localhost
+#
+##PARMNAME $3
+##PARMDESC mail subject
+##PARMDFLT [LVL] nomd issues on HOSTNAME (where LVL is the highest severity encountered)
 {
     # map severities to longtext
     # TODO: pull this up to the main script

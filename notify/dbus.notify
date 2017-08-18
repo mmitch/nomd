@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# notify via notify-send (local notification dbus)
-# parameters:
-# $1: regexp to filter notifications
 notify_dbus()
+##NOTYDESC notify via dbus (notify-send)
+#
+##PARMNAME $1
+##PARMDESC regexp to filter notifications
+##PARMDFLT ^[CW] (only match criticals and warnings)
 {
     # receive parameters and set defaults
     local FILTER=${1:-^[CW]}

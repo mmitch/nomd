@@ -25,7 +25,7 @@ sub scanfile($)
 	}
 	elsif ($line =~ /^##([A-Z]{8})\s+(.*)$/) {
 	    my ($key, $data) = ($1, $2);
-	    if ($key eq 'CHECKDSC') {
+	    if ($key eq 'CHECKDSC' or $key eq 'NOTYDESC') {
 		if (exists $current->{DESC}) {
 		    $current->{DESC} .= "\n";
 		} else {
