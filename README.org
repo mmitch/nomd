@@ -36,8 +36,10 @@ Specifically, nomd is no omd.
   - [X] dbus/notify-send
   - [X] terminal output
 - [X] main configuration file is plain bash and is simply run
-- [X] provide default configuration, use local configuration instead if available
-- [X] pass all nomd commandline arguments to checkers and notifications
+- [X] provide default configuration, use local configuration instead
+  if available
+- [X] pass all nomd commandline arguments to checkers and
+  notifications
   - maximum flexibility in local scripts
 - [X] convenience variables for notifications
   - count of all severities, highest severity
@@ -60,8 +62,8 @@ Specifically, nomd is no omd.
 
 - run ~make check-deps~ to see if all dependencies are installed
   - if Perl modules are missing, you can install them manually
-    (eg. via your distribution packages to get updates) or, if you
-    use a local ~cpanm~ installation, just run ~make install-perl-deps~
+    (eg. via your distribution packages to get updates) or, if you use
+    a local ~cpanm~ installation, just run ~make install-perl-deps~
 
 *** execution
 
@@ -92,20 +94,23 @@ Checks write one or more lines to stdout in the format
 
 where
 
-- SEVERITY :: is one of ~C~ (critical), ~W~ (warning) or ~I~ (informational - quite verbose, also used for debugging)
+- SEVERITY :: is one of ~C~ (critical), ~W~ (warning) or ~I~
+              (informational - quite verbose, also used for debugging)
 - CHECK :: is the name of the check that wrote the line
-- INFORMATION :: is freetext information about the details of the check
+- INFORMATION :: is freetext information about the details of the
+                 check
 
 *** notifications
 
 Notifications are called with these environment variables set:
 
-- NOMD_CHECK_RESULTS :: pointing to a file with the complete results of
-the preceding checks
+- NOMD_CHECK_RESULTS :: pointing to a file with the complete results
+     of the preceding checks
 - NOMD_CRIT_COUNT :: number of critical check results
 - NOMD_WARN_COUNT :: number of warning check results
 - NOMD_INFO_COUNT :: number of informational check results
-- NOMD_HIGHEST_SEVERITY :: either ~C~, ~W~ or ~I~ depending on the worst check result
+- NOMD_HIGHEST_SEVERITY :: either ~C~, ~W~ or ~I~ depending on the
+     worst check result
 
 ** things for thoughts
 
@@ -116,7 +121,8 @@ the preceding checks
 - add a notification that mails the local config/settings?
 - checks
   - check_mk wrapper
-  - memfree - but what to check? memory? swap? both? warning/crit thresholds?
+  - memfree - but what to check? memory? swap? both? warning/crit
+    thresholds?
   - ntpd checker
 - notifications
   - pushbullet
