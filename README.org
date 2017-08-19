@@ -3,7 +3,7 @@
 Generally, nomd is a simple nomitoring distribution.
 Specifically, nomd is no omd.
 
-** project status-o-meter
+** [5/7] project status-o-meter
 
 - [ ] I actually know of one other user
 - [ ] might be usable for somebody else
@@ -13,7 +13,7 @@ Specifically, nomd is no omd.
 - [X] a wild first code appears!
 - [X] some vague ideas and rumors
 
-** feature fahrplan
+** [10/12] feature fahrplan
 
 - [X] [8/8] plugin architecture for checks
   - [X] load
@@ -52,7 +52,7 @@ Specifically, nomd is no omd.
 - [X] generate documentation
   - describe methods and parameters per helper
   - global fetch and display
-- [ ] describe parameter handling
+- [X] describe parameter handling
   - all helpers should provide sensible defaults
   - call without parameters should be possible
 
