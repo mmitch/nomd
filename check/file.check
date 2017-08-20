@@ -94,6 +94,12 @@ check_file_newer()
     AMOUNT=${2:-1}
     TYPE=${3:-d}
 
+    # sanity check
+    if [ ! -d "$DIR" ]; then
+	echo "C:file_newer:$DIR is no directory!"
+	return 0
+    fi
+
     # calculate timespan
     case $TYPE in
 	m)
