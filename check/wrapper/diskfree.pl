@@ -15,7 +15,10 @@ while (my $line = <STDIN>) {
 MOUNTPOINT: foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
      
     foreach my $skip (@skip) {
-	next MOUNTPOINT if $mountpoint =~ /$skip/;
+	if ($mountpoint =~ /$skip/) {
+	    print "I:diskfree:skipped $mountpoint\n";
+	    next MOUNTPOINT;
+	}
     }
      
     my $df = df($mountpoint, 1024);
