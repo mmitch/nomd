@@ -57,7 +57,7 @@ check_file_contains()
 ##PARMDFLT nomd
 {
     # receive parameters and set defaults
-    REGEXP=${1:-.}
+    local REGEXP=${1:-.}
     shift 1
     if [ -z "$*" ]; then
 	set -- nomd
@@ -74,7 +74,7 @@ check_file_contains()
 }
 
 check_file_newer()
-##CHECKDSC check a given directory (no recursion) for a file that has been modified
+##CHECKDSC check a given directory (no recursion) for a least one file that has been modified
 ##CHECKDSC in the given interval (at least that long ago)
 #
 ##PARMNAME $1
@@ -90,13 +90,46 @@ check_file_newer()
 ##PARMDFLT d
 {
     # receive parameters and set defaults
-    DIR=${1:-.}
-    AMOUNT=${2:-1}
-    TYPE=${3:-d}
+    local DIR="${1:-.}"
+    local AMOUNT=${2:-1}
+    local TYPE=${3:-d}
 
+    # delegate
+    _check_newer 'file_newer' 'file' "$DIR" "$AMOUNT" "$TYPE"
+}
+
+check_dir_newer()
+##CHECKDSC check a given directory (no recursion) for a least one directory that has been modified
+##CHECKDSC in the given interval (at least that long ago)
+#
+##PARMNAME $1
+##PARMDESC the directory to check
+##PARMDFLT . (current directory)
+#
+##PARMNAME $2
+##PARMDESC time interval numeric: eg. 30 for 30 minutes
+##PARMDFLT 1
+#
+##PARMNAME $3
+##PARMDESC time interval type: m=minutes, h=hours, d=days, w=weeks
+##PARMDFLT d
+{
+    # receive parameters and set defaults
+    local DIR="${1:-.}"
+    local AMOUNT=${2:-1}
+    local TYPE=${3:-d}
+
+    # delegate
+    _check_newer 'dir_newer' 'dir' "$DIR" "$AMOUNT" "$TYPE"
+}
+
+_check_newer()
+{
+    local CHECK=$1 FILETYPE=$2 DIR="$3" AMOUNT=$4 TYPE=$5
+    
     # sanity check
     if [ ! -d "$DIR" ]; then
-	echo "C:file_newer:$DIR is no directory!"
+	echo "C:$CHECK:$DIR is no directory!"
 	return 0
     fi
 
@@ -117,10 +150,10 @@ check_file_newer()
     esac
 	
     # check files
-    FOUND=$(find "$DIR" -maxdepth 1 -type f -mmin -$MINUTES 2>/dev/null | wc -l)
+    FOUND=$(find "$DIR" -maxdepth 1 -type ${FILETYPE:0:1} -mmin -$MINUTES 2>/dev/null | wc -l)
     if [ $FOUND -gt 0 ]; then
-	echo "I:file_newer:$DIR contains $FOUND file(s) newer than $AMOUNT$TYPE"
+	echo "I:$CHECK:$DIR contains $FOUND $FILETYPE(s) newer than $AMOUNT$TYPE"
     else
-	echo "C:file_newer:$DIR contains no file newer than $AMOUNT$TYPE"
+	echo "C:$CHECK:$DIR contains no $FILETYPE newer than $AMOUNT$TYPE"
     fi
 }
