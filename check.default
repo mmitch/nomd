@@ -33,5 +33,8 @@ which systemctl >/dev/null && check_systemctl
 # BUT SEEMS TO FAIL ON DEBIAN - better use no parameter at all!
 which apt >/dev/null && check_apt '(/updates|-security)'
 
+# check for updates
+check_nomd_updates
+
 # remove spinner
 spinner_stop
