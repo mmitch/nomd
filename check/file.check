@@ -86,7 +86,7 @@ check_file_newer()
 ##PARMDFLT 1
 #
 ##PARMNAME $3
-##PARMDESC time interval type: m=minutes, h=hours, d=days
+##PARMDESC time interval type: m=minutes, h=hours, d=days, w=weeks
 ##PARMDFLT d
 {
     # receive parameters and set defaults
@@ -110,6 +110,9 @@ check_file_newer()
 	    ;;
 	d)
 	    MINUTES=$(( AMOUNT * 60 * 24 ))
+	    ;;
+	w)
+	    MINUTES=$(( AMOUNT * 60 * 24 * 7 ))
 	    ;;
     esac
 	
