@@ -10,8 +10,8 @@ check_nomd_updates()
 	return
     fi
 
-    # update remote refs
-    git remote update > /dev/null
+    # update remote refs (needs to be completely silenced - good lock with actual bugs...)
+    git remote update >/dev/null 2>/dev/null
 
     # get latest local, upstream and common commit
     local LOCAL=$(git rev-parse @)
