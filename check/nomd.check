@@ -1,0 +1,26 @@
+#!/bin/bash
+
+check_nomd_updates()
+##CHECKDSC check for nomd updates on git upstream branch (needs git repository)
+##CHECKDSC note: possible updates are only of severity 'warning'
+{
+    # check for git
+    if [ ! -d .git/ ]; then
+	echo 'C:nomd_updates:this is no git repository - no check possible'
+	return
+    fi
+
+    # update remote refs
+    git remote update > /dev/null
+
+    # get latest local, upstream and common commit
+    local LOCAL=$(git rev-parse @)
+    local UPSTREAM=$(git rev-parse @{u})
+    local COMMON=$(git merge-base @ @{u})
+
+    if [ $UPSTREAM == $COMMON -o $UPSTREAM == $LOCAL ]; then
+	echo 'I:nomd_updates:no new commits on upstream'
+    else
+	echo 'W:nomd_updates:new commits on upstrea'
+    fi
+}
