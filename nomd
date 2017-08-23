@@ -6,7 +6,7 @@ if [ $BASH_VERSINFO -lt 4 ]; then
     exit 1
 fi
 
-# set up temporary file
+# set up temporary directory
 NOMD_TEMP_DIR="$(mktemp -d --tmpdir nomd.XXXXXXXX)"
 NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"
 NOMD_CHECK_STDERR="$NOMD_TEMP_DIR/check_errors"
@@ -23,7 +23,7 @@ on_exit_or_error()
 	cat "$NOMD_NOTIFY_STDERR" >&2
     fi
     
-    # autoclean tempfile
+    # autoclean temporary directory
     rm -r "$NOMD_TEMP_DIR"
 }
 trap on_exit_or_error EXIT
