@@ -1,0 +1,141 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use v5.10;
+
+use File::Basename;
+
+#################################
+
+sub find_perl_files()
+{
+    return glob("nomdoc nomdep check/wrapper/*.pl");
+}
+
+sub find_shell_files()
+{
+    return glob("nomd check/*.check notify/*.notify tool/*.tool");
+}
+
+sub extract_perl_dependencies($)
+{
+    my ($file) = @_;
+    
+    my @deps = ();
+
+    open PERL, '<', $file or die "can't open $file: $!";
+    
+    while (my $line = <PERL>) {
+	if ($line =~ /^use ([a-zA-z0-9.:]+)(?:\s+.*)?;/) {
+	    chomp $line;
+	    push @deps, {
+		FILE => $file,
+		DEP => $1,
+		LINE => $line,
+		TYPE => 'perl',
+	    };
+	}
+    }
+    
+    close PERL or die "can't close $file: $!";
+
+    return @deps;
+}
+
+sub extract_shell_dependencies($)
+{
+    my ($file) = @_;
+    
+    my @deps = ();
+
+    open SHELL, '<', $file or die "can't open $file: $!";
+    
+    while (my $line = <SHELL>) {
+	if ($line =~ /^##SHELLDEP\s+(.+?)\s*$/) {
+	    chomp $line;
+	    push @deps, {
+		FILE => $file,
+		DEP => $1,
+		LINE => $line,
+		TYPE => 'shell',
+	    };
+	}
+    }
+    
+    close SHELL or die "can't close $file: $!";
+
+    return @deps;
+}
+
+sub group_by_line(@)
+{
+    my (@deps) = @_;
+
+    my %uses = ();
+
+    foreach my $dep (@deps) {
+	$uses{$dep->{LINE}}->{DEP} = $dep->{DEP};
+	$uses{$dep->{LINE}}->{LINE} = $dep->{LINE};
+	$uses{$dep->{LINE}}->{TYPE} = $dep->{TYPE};
+	push @{$uses{$dep->{LINE}}->{FILES}}, $dep->{FILE};
+    }
+
+    return values %uses;
+}
+
+sub sort_by_type_then_name()
+{
+    return $a->{TYPE} cmp $b->{TYPE} || $a->{DEP} cmp $b->{DEP};
+}
+
+sub is_binary_in_path($)
+{
+    my ($cmd) = @_;
+
+    `which $cmd`;
+    return ! $?;
+}
+
+sub keep_missing($)
+{
+    my ($dep) = @_;
+
+    if ($dep->{TYPE} eq 'perl') {
+	eval($dep->{LINE});
+	my $module_load_ok = $@ eq '';
+	return ! $module_load_ok;
+    }
+    elsif ($dep->{TYPE} eq 'shell') {
+	# support OR conditions with multiple binaries in one line
+	my $binary_in_path = grep { is_binary_in_path $_ } split /\s+/, $dep->{DEP};
+	return ! $binary_in_path;
+    }
+    
+    return 1;
+}
+
+sub print_dependency($)
+{
+    my ($dep) = @_;
+
+    my $name = $dep->{DEP};
+
+    if ($dep->{TYPE} eq 'shell') {
+	# expand OR conditions
+	$name =~ s/\s+/ or /g;
+    }
+    
+    printf
+	"missing %s dependency: %s (used in %s)\n",
+	$dep->{TYPE},
+	$name,
+	join(', ', map { basename $_} @{$dep->{FILES}});
+}
+
+#################################
+
+my @perldeps  = map { extract_perl_dependencies($_)  } find_perl_files();
+my @shelldeps = map { extract_shell_dependencies($_) } find_shell_files();
+
+print_dependency($_) foreach sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@perldeps, @shelldeps);
+

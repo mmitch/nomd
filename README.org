@@ -13,7 +13,7 @@ Specifically, nomd is no omd.
 - [X] a wild first code appears!
 - [X] some vague ideas and rumors
 
-** [10/12] feature fahrplan
+** [11/12] feature fahrplan
 
 - [X] [8/8] plugin architecture for checks
   - [X] load
@@ -46,7 +46,7 @@ Specifically, nomd is no omd.
 - [X] wrappers for scripts in other languages
 - [X] support local configuration with git branches
 - [ ] add copyright notices, project homepage and other boring stuff
-- [ ] dependency handling
+- [X] dependency handling
   - document dependencies per helper
   - global fetch and display
 - [X] generate documentation
@@ -112,6 +112,15 @@ Notifications are called with these environment variables set:
 - NOMD_HIGHEST_SEVERITY :: either ~C~, ~W~ or ~I~ depending on the
      worst check result
 
+*** dependencies
+
+- perl ~use~ lines are picked up automatically
+- shell scripts (checks and notifications) must declare their
+  dependencies by adding ~##SHELLDEP~ per dependency
+  - ~##SHELLDEP xyz~ depends on binary ~xyz~
+  - ~##SHELLDEP x y z~ depends on any one of ~x~, ~y~ or ~z~
+    (ex. ~http.check~, which can use either ~wget~, ~curl~ or
+    ~GET/HEAD~ to do HTTP requests)
 ** things for thoughts
 
 - convenience function for writing the protocol lines that
@@ -126,3 +135,4 @@ Notifications are called with these environment variables set:
   - ntpd checker
 - notifications
   - pushbullet
+  - HTML nuggets
