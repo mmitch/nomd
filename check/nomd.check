@@ -21,6 +21,6 @@ check_nomd_updates()
     if [ $UPSTREAM == $COMMON -o $UPSTREAM == $LOCAL ]; then
 	echo 'I:nomd_updates:no new commits on upstream'
     else
-	echo 'W:nomd_updates:new commits on upstrea'
+	echo 'W:nomd_updates:new commits on upstream'
     fi
 }
