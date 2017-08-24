@@ -4,6 +4,7 @@ use warnings;
 use v5.10;
 
 use File::Basename;
+use Getopt::Long;
 
 #################################
 
@@ -114,28 +115,103 @@ sub keep_missing($)
     return 1;
 }
 
-sub print_dependency($)
+sub print_missing($)
 {
-    my ($dep) = @_;
+    my (@deps) = @_;
 
-    my $name = $dep->{DEP};
-
-    if ($dep->{TYPE} eq 'shell') {
-	# expand OR conditions
-	$name =~ s/\s+/ or /g;
+    foreach my $dep (@deps) {
+	my $name = $dep->{DEP};
+	
+	if ($dep->{TYPE} eq 'shell') {
+	    # expand OR conditions
+	    $name =~ s/\s+/ or /g;
+	}
+	
+	printf
+	    "missing %s dependency: %s (used in %s)\n",
+	    $dep->{TYPE},
+	    $name,
+	    join(', ', map { basename $_} @{$dep->{FILES}});
     }
+}
+
+sub print_cpanm($)
+{
+    my (@deps) = @_;
+
+    my @modules = map { $_->{DEP} } @deps;
     
-    printf
-	"missing %s dependency: %s (used in %s)\n",
-	$dep->{TYPE},
-	$name,
-	join(', ', map { basename $_} @{$dep->{FILES}});
+    # TODO: remove --skip-satisfied? will break with versioned dependencies
+    printf "cpanm --skip-satisfied %s\n", join(' ', @modules);
+}
+
+sub print_apt($)
+{
+    my (@deps) = @_;
+
+    my @packages = map {
+	if ($_->{TYPE} eq 'perl') {
+	    sprintf "lib%s-perl", join('-', split(/::/, lc($_->{DEP})));
+	}
+	elsif ($_->{TYPE} eq 'shell') {
+	    # only take first option if there are more
+	    (split /\s/, $_->{DEP}, 2)[0];
+	}
+	else {
+	    $_->{DEP}
+	}
+    } @deps;
+    
+    printf "apt install %s\n", join(' ', @packages);
+}
+
+sub get_perl_deps()
+{
+    return map { extract_perl_dependencies($_)  } find_perl_files();
+}
+
+sub get_shell_deps()
+{
+    return map { extract_shell_dependencies($_) } find_shell_files();
 }
 
 #################################
 
-my @perldeps  = map { extract_perl_dependencies($_)  } find_perl_files();
-my @shelldeps = map { extract_shell_dependencies($_) } find_shell_files();
+my $help;
+my $cpanm;
+my $apt;
 
-print_dependency($_) foreach sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@perldeps, @shelldeps);
+GetOptions('help' => \$help, 'apt' => \$apt, 'cpanm' => \$cpanm);
+
+if ($help) {
+    print <<'EOF'
+usage:  nomdep [--help | --apt | --cpanm]
+
+Call without parameters to list all missing dependencies.
+Use --cpanm to generate a cpanm command to install missing Perl libraries.
+Use --apt to try to guess package names to install missing dependencies.
+EOF
+	;
+    exit 0;
+}
+
+my @deps;
+my $printer;
+
+if ($apt) {
+    @deps = (get_perl_deps(), get_shell_deps());
+    $printer = \&print_apt;
+}
+elsif ($cpanm)
+{
+    @deps = get_perl_deps();
+    $printer = \&print_cpanm;
+}
+else {
+    @deps = (get_perl_deps(), get_shell_deps());
+    $printer = \&print_missing;
+}
+
+my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
+$printer->(@missing);
 
