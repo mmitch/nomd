@@ -1,4 +1,6 @@
 #!/bin/bash
+##SHELLDEP grep
+##SHELLDEP mail
 
 notify_mail()
 ##NOTYDESC notify via email (plain text)

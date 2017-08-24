@@ -1,4 +1,8 @@
 #!/bin/bash
+##SHELLDEP wget curl GET
+##SHELLDEP wget curl HEAD
+##SHELLDEP grep
+##SHELLDEP which
 
 check_http_status()
 ##CHECKDSC check HTTP status code

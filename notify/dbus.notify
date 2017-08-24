@@ -1,4 +1,6 @@
 #!/bin/bash
+##SHELLDEP grep
+##SHELLDEP notify-send
 
 notify_dbus()
 ##NOTYDESC notify via dbus (notify-send)

@@ -1,4 +1,5 @@
 #!/bin/bash
+##SHELLDEP git
 
 check_nomd_updates()
 ##CHECKDSC check for nomd updates on git upstream branch (needs git repository)

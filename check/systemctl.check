@@ -1,4 +1,7 @@
 #!/bin/bash
+##SHELLDEP cut
+##SHELLDEP grep
+##SHELLDEP systemctl
 
 check_systemctl()
 ##CHECKDSC check systemctl for failed units

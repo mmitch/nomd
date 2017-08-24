@@ -6,6 +6,12 @@ if [ $BASH_VERSINFO -lt 4 ]; then
     exit 1
 fi
 
+# dependency information
+##SHELLDEP cat
+##SHELLDEP grep
+##SHELLDEP mktemp
+##SHELLDEP rm
+
 # set up temporary directory
 NOMD_TEMP_DIR="$(mktemp -d --tmpdir nomd.XXXXXXXX)"
 NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"

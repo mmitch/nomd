@@ -1,4 +1,5 @@
 #!/bin/bash
+##SHELLDEP uptime
 
 check_load()
 ##CHECKDSC check system load (15 min interval)

@@ -1,4 +1,7 @@
 #!/bin/bash
+##SHELLDEP apt
+##SHELLDEP grep
+##SHELLDEP wc
 
 check_apt()
 ##CHECKDSC check pending apt updates (this needs a Debian based system, obviously)
@@ -28,5 +31,5 @@ check_apt()
 _get_apt_updatables()
 {
     # trick around to remove the warning for non-interactive use, but still show everything else from stderr
-    LANG=C apt list --upgradable 2> >(egrep -v "(^$|WARNING: apt does not have a stable CLI interface( yet)?. Use with caution in scripts.)" 1>&2) | grep /
+    LANG=C apt list --upgradable 2> >(grep -E -v "(^$|WARNING: apt does not have a stable CLI interface( yet)?. Use with caution in scripts.)" 1>&2) | grep /
 }

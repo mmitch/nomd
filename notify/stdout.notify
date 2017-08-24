@@ -1,4 +1,5 @@
 #!/bin/bash
+##SHELLDEP grep
 
 notify_stdout()
 ##NOTYDESC notify via stdout, using colors if available

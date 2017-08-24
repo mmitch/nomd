@@ -1,4 +1,5 @@
 #!/bin/bash
+##SHELLDEP ping
 
 check_ping_alive()
 ##CHECKDSC check if a host is up via ICMP ping

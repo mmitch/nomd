@@ -1,4 +1,8 @@
 #!/bin/bash
+##SHELLDEP cat
+##SHELLDEP grep
+##SHELLDEP rm
+##SHELLDEP timeout
 
 check_tcp_connect()
 ##CHECKDSC check for open tcp port (attempt connection)

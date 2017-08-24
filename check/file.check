@@ -1,4 +1,7 @@
 #!/bin/bash
+##SHELLDEP find
+##SHELLDEP grep
+##SHELLDEP wc
 
 check_file_exists()
 ##CHECKDSC check if one or more files exist
