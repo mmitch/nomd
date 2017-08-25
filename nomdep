@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
