@@ -9,29 +9,28 @@ yeah-that's-a-good-idea.
 
 Also I have probably already gotten sidetracked by other projects.
 
-* checks
+checks
+------
 
-  - check_mk wrapper
-	* but it's just data, we need to define thresholds etc.
-    * sounds like reimplementing Nagios - don't want
+* check_mk wrapper
+  - but it's just data, we need to define thresholds etc.
+  - sounds like reimplementing Nagios - don't want
+* free memory check
+  - but what to check? memory? swap? both?
+  - what are reasonable warning/crit thresholds?
+* ntpd checker
 
-  - free memory check
-	* but what to check? memory? swap? both?
-	* what are reasonable warning/crit thresholds?
+notifications
+-------------
 
-  - ntpd checker
+* pseudo-notification that mails `check.local` and `notify.local`
+  for backup purposes?
+* pushbullet
+* HTML nuggets to be included in a status page
+  - hey, we don't want to be data-center grade :-)
 
-* notifications
+internals
+---------
 
-  - pseudo-notification that mails `check.local` and `notify.local`
-	for backup purposes?
-  
-  - pushbullet
-
-  - HTML nuggets to be included in a status page
-	* hey, we don't want to be data-center grade :-)
-
-* internals
-
-  - convenience function for writing the protocol lines that
-	automatically detects the name of the current check
+* convenience function for writing the protocol lines that
+  automatically detects the name of the current check
