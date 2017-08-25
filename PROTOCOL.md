@@ -43,8 +43,8 @@ dependencies
 
 * Perl `use` lines are picked up automatically
 * shell scripts (*checks* and *notifications*) must explicitely
-  declare their dependencies by adding `##SHELLDEP` comment line per
-  dependency:
+  declare their dependencies by adding one `##SHELLDEP` comment line
+  per dependency:
   - `##SHELLDEP xyz` depends on binary `xyz`
   - `##SHELLDEP x y z` depends on any one of `x`, `y` or `z`
     (see `http.check`, which can use either `wget`, `curl` or
