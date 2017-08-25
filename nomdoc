@@ -4,6 +4,7 @@ use warnings;
 use v5.10;
 
 use List::Util qw(max);
+use Getopt::Long;
 
 #################################
 
@@ -80,12 +81,29 @@ sub print_long($)
 
 #################################
 
+my $help;
+
+GetOptions('help' => \$help);
+
+if ($help) {
+    print <<'EOF'
+usage:  nomdoc [--help | <regexp>]
+
+Call without parameters to list overview of all available commands.
+Call with parameter to list details about all commands matching the regexp.
+EOF
+	;
+    exit 0;
+}
+
+my $regexp = $ARGV[0];
+
 my @files = glob "check/*.check notify/*.notify";
 
 my @docs = sort { $a->{NAME} cmp $b->{NAME} } map { scanfile($_) } @files;
 
-if (defined $ARGV[0] && $ARGV[0]) {
-    print_long($_) foreach grep { $_->{NAME} =~ /$ARGV[0]/i } @docs;
+if (defined $regexp && $regexp) {
+    print_long($_) foreach grep { $_->{NAME} =~ /$regexp/i } @docs;
 }
 else {
     my $longest_cmd = max map { length $_->{NAME} } @docs;
