@@ -33,7 +33,7 @@ fi
 ##SHELLDEP rm
 
 # set up temporary directory
-NOMD_TEMP_DIR="$(mktemp -d --tmpdir nomd.XXXXXXXX)"
+NOMD_TEMP_DIR="$(mktemp -d -t nomd.XXXXXXXX)"
 NOMD_CHECK_RESULTS="$NOMD_TEMP_DIR/check_results"
 NOMD_CHECK_STDERR="$NOMD_TEMP_DIR/check_errors"
 NOMD_NOTIFY_STDERR="$NOMD_TEMP_DIR/notify_errors"
