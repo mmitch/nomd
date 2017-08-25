@@ -2,8 +2,9 @@ language: perl
 
 perl:
   # newer Perl -> fewer dependencies to install for the Perl modules -> faster
+  # (currently not relevant as the Perl dependencies are not needed)
   - "5.22"
 
-install: make install-perl-deps
+install: true
 
 script: make test

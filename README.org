@@ -3,10 +3,10 @@
 Generally, nomd is a simple nomitoring distribution.
 Specifically, nomd is no omd.
 
-** [5/7] project status-o-meter
+** [6/7] project status-o-meter
 
 - [ ] I actually know of one other user
-- [ ] might be usable for somebody else
+- [X] might be usable for somebody else
 - [X] detected a real-world problem
 - [X] works for me on at least three machines
 - [X] basic features implemented
@@ -60,10 +60,12 @@ Specifically, nomd is no omd.
 
 *** installation
 
-- run ~make check-deps~ to see if all dependencies are installed
-  - if Perl modules are missing, you can install them manually
-    (eg. via your distribution packages to get updates) or, if you use
-    a local ~cpanm~ installation, just run ~make install-perl-deps~
+- run ~./nomdep~ to see if all dependencies are installed
+  - if missing dependencies affect a check or notification you don't
+    want to use: just ignore it
+  - otherwise install the missing dependencies
+    - ~./nomdep --apt~ and ~./nomdep --cpanm~ might help you with
+      installing
 
 *** execution
 
