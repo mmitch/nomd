@@ -98,7 +98,7 @@ configuration
 `nomd` reads these configuration files:
 
 * `check.local` contains the *checks* you want to run.  It is a shell
-  script, you can mostly do what you want, but you should not write do
+  script, you can mostly do what you want, but you should not write to
   stdout as this is where the check results are collected.
 * If `check.local` is missing, `nomd` falls back to `check.default`
   which contains an example configuration and is part of the nomd
@@ -110,9 +110,9 @@ configuration
   `notify.default` which contains an example configuration and is part
   of the nomd distribution.
 
-To get started with your own configuration, copy
-`check.default`/`notify.default` to `check.local`/`notify.local` and
-start hacking.
+To get started with your own configuration, copy `check.default` and
+`notify.default` to `check.local` and `notify.local` and start
+hacking.
 
 Both `check.local` and `notify.local` are not part of the git
 repository and will not be overwritten on updates.
