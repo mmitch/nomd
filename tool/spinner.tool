@@ -1,6 +1,5 @@
 # spinner for interactive use
 # uses file descriptor 3 in nomd
-# needs bash 4.0 associative arrays
 
 NOMD_SPINNER=
 NOMD_SPINNER_INDEX=0
