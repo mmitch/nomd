@@ -1,6 +1,9 @@
 nomd
 ====
 
+[![Build Status](https://travis-ci.org/mmitch/nomd.svg?branch=master)](https://travis-ci.org/mmitch/nomd)
+[![GPL 3+](https://img.shields.io/badge/license-GPL%203%2B-blue.svg)](http://www.gnu.org/licenses/gpl-3.0-standalone.html)
+
 Generally, nomd is a simple nomitoring distribution.  
 Specifically, nomd is no omd.
 
@@ -161,3 +164,22 @@ If you are by any chance looking for small and lightweight graph
 statistics for a single system, have a look at nomd's big sister
 project at https://github.com/mmitch/rrd (yes, the README is still
 missing over there)
+
+license
+-------
+
+Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>  
+Licensed under GNU GPL v3 or later.
+
+nomd is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+nomd is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with nomd.  If not, see <http://www.gnu.org/licenses/>.
