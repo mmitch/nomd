@@ -15,8 +15,13 @@ check_nomd_updates()
 
     # get latest local, upstream and common commit
     local LOCAL=$(git rev-parse @)
-    local UPSTREAM=$(git rev-parse @{u})
-    local COMMON=$(git merge-base @ @{u})
+    local UPSTREAM=$(git rev-parse @{u} 2>/dev/null)
+    local COMMON=$(git merge-base @ @{u} 2>/dev/null)
+
+    if [ -z "$UPSTREAM" ]; then
+	echo 'C:nomd_updates:currently checked out branch has no upstream - no check possible'
+	return
+    fi
 
     if [ $UPSTREAM == $COMMON -o $UPSTREAM == $LOCAL ]; then
 	echo 'I:nomd_updates:no new commits on upstream'
