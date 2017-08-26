@@ -259,7 +259,6 @@ else {
     $printer = \&print_missing;
 }
 
-#my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
-my @missing = sort { sort_by_type_then_name() } group_by_line (@deps);
+my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
 $printer->(@missing);
 
