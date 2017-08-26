@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP wget curl GET fetch
+##SHELLDEP grep
+##SHELLDEP which
+
+check_http_content()
+##CHECKDSC check HTTP response content
+#
+##PARMNAME $1
+##PARMDESC URL to connect to
+##PARMDFLT http://www.example.com/
+#
+##PARMNAME $2
+##PARMDESC regexp of expected content
+##PARMDFLT Example Domain
+{
+    [ $CHECK_HTTP_GET_BINARY ] || _determine_http_get_binary
+
+    # receive parameters and set defaults
+    local URL="${1:-http://www.example.com/}"
+    local EXPECTED_RE="${2:-Example Domain}" 
+
+    # get and check content
+    if _get_http_content "$URL" | grep -q -E "$EXPECTED_RE"; then
+	echo "I:http_content:content ok on $URL ($EXPECTED_RE)"
+    else
+	echo "C:http_content:expected content not found in $URL: $EXPECTED_RE"
+    fi
+}
+
+# cache selected binary in $CHECK_HTTP_GET_BINARY
+_determine_http_get_binary()
+{
+    if which wget >/dev/null; then
+	CHECK_HTTP_GET_BINARY=wget
+    elif which curl >/dev/null; then
+	CHECK_HTTP_GET_BINARY=curl
+    elif which GET >/dev/null; then
+	CHECK_HTTP_GET_BINARY=lwp
+    elif which fetch >/dev/null; then
+	CHECK_HTTP_GET_BINARY=fetch
+    fi
+
+    if [ $CHECK_HTTP_GET_BINARY ]; then
+	echo "I:http_content:binary $CHECK_HTTP_GET_BINARY selected"
+    else
+	echo 'C:http_content:no suitable binary found (wget/curl/GET/fetch)'
+    fi
+}
+
+_get_http_content()
+{
+    local URL="$1"
+
+    case $CHECK_HTTP_GET_BINARY in
+	wget)
+	    wget -q -O- "$URL"
+	    ;;
+
+	curl)
+	    curl -o- --silent "$URL"
+	    ;;
+	
+	lwp)
+	    GET "$URL"
+	    ;;
+	fetch)
+	    fetch -q -o - "$URL"
+	    ;;
+    esac
+}

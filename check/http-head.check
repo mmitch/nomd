@@ -19,7 +19,6 @@
 # along with nomd.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-##SHELLDEP wget curl GET
 ##SHELLDEP wget curl HEAD
 ##SHELLDEP grep
 ##SHELLDEP which
@@ -35,7 +34,7 @@ check_http_status()
 ##PARMDESC expected HTTP status code
 ##PARMDFLT 200
 {
-    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
+    [ $CHECK_HTTP_HEAD_BINARY ] || _determine_http_head_binary
 
     # receive parameters and set defaults
     local URL="${1:-http://www.example.com/}"
@@ -43,53 +42,28 @@ check_http_status()
 
     # get status
     local STATUS=$(_get_http_status "$URL")
-    if [ "$STATUS" != "$EXPECTED_STATUS" ]; then
-	echo "C:http_status:$STATUS != $EXPECTED_STATUS on $URL"
-    else
+    if [ "$STATUS" == "$EXPECTED_STATUS" ]; then
 	echo "I:http_status:$STATUS as expected on $URL"
-    fi
-}
-
-check_http_content()
-##CHECKDSC check HTTP response content
-#
-##PARMNAME $1
-##PARMDESC URL to connect to
-##PARMDFLT http://www.example.com/
-#
-##PARMNAME $2
-##PARMDESC regexp of expected content
-##PARMDFLT Example Domain
-{
-    [ $CHECK_HTTP_TOOLSET ] || _determine_http_toolset
-
-    # receive parameters and set defaults
-    local URL="${1:-http://www.example.com/}"
-    local EXPECTED_RE="${2:-Example Domain}" 
-
-    # get and check content
-    if _get_http_content "$URL" | grep -q -E "$EXPECTED_RE"; then
-	echo "I:http_content:content ok on $URL ($EXPECTED_RE)"
     else
-	echo "C:http_content:expected content not found in $URL: $EXPECTED_RE"
+	echo "C:http_status:$STATUS != $EXPECTED_STATUS on $URL"
     fi
 }
 
-# cache selcted toolset in $CHECK_HTTP_TOOLSET
-_determine_http_toolset()
+# cache selected binary in $CHECK_HTTP_HEAD_BINARY
+_determine_http_head_binary()
 {
     if which wget >/dev/null; then
-	CHECK_HTTP_TOOLSET=wget
+	CHECK_HTTP_HEAD_BINARY=wget
     elif which curl >/dev/null; then
-	CHECK_HTTP_TOOLSET=curl
-    elif which HEAD GET >/dev/null; then
-	CHECK_HTTP_TOOLSET=lwp
+	CHECK_HTTP_HEAD_BINARY=curl
+    elif which HEAD >/dev/null; then
+	CHECK_HTTP_HEAD_BINARY=lwp
     fi
 
-    if [ $CHECK_HTTP_TOOLSET ]; then
-	echo "I:http:toolset $CHECK_HTTP_TOOLSET selected"
+    if [ $CHECK_HTTP_HEAD_BINARY ]; then
+	echo "I:http_status:binary $CHECK_HTTP_HEAD_BINARY selected"
     else
-	echo 'C:http:no suitable toolset found (wget/curl/LWP)'
+	echo 'C:http_status:no suitable binary found (wget/curl/HEAD)'
     fi
 }
 
@@ -97,7 +71,7 @@ _get_http_status()
 {
     local URL="$1"
 
-    case $CHECK_HTTP_TOOLSET in
+    case $CHECK_HTTP_HEAD_BINARY in
 	wget)
 	    local STATUS DUMMY
 	    read DUMMY STATUS DUMMY <<< $(wget --server-response --spider example.com 2>&1 | grep '^  HTTP')
@@ -112,25 +86,6 @@ _get_http_status()
 	    local STATUS DUMMY
 	    read STATUS DUMMY <<< $(HEAD "$URL")
 	    echo $STATUS
-	    ;;
-    esac
-}
-
-_get_http_content()
-{
-    local URL="$1"
-
-    case $CHECK_HTTP_TOOLSET in
-	wget)
-	    wget -q -O- "$URL"
-	;;
-
-	curl)
-	    curl -o- --silent "$URL"
-	    ;;
-	
-	lwp)
-	    GET "$URL"
 	    ;;
     esac
 }
