@@ -18,7 +18,7 @@ check_tcp_connect
 check_file_exists
 # check if ./nomd~ does not exist
 check_file_missing nomd~
-# check if directory is current
+# check if  ./nomd is current
 check_file_newer
 
 # check internet connectivity ;-)
