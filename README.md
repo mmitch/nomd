@@ -1,18 +1,16 @@
-nomd
-====
+nomd nomitoring distribution
+============================
 
 [![Build Status](https://travis-ci.org/mmitch/nomd.svg?branch=master)](https://travis-ci.org/mmitch/nomd)
 [![GPL 3+](https://img.shields.io/badge/license-GPL%203%2B-blue.svg)](http://www.gnu.org/licenses/gpl-3.0-standalone.html)
 
-Generally, nomd is a simple nomitoring distribution.  
+Generally, nomd is small and lightweight nomitoring distribution.  
 Specifically, nomd is no omd.
 
-nomd is a small and lightweight monitoring distribution that is
-intended to run on a single system.  It is designed to be run once or
-twice a day via cron or every time you log in to your desktop.  It can
-inform and warn you about various things, like that one partition that
-is nearly full again or that your ISP mail server is currently
-unreachable.
+nomd is designed to be run once or twice a day via cron or every time
+you log in to your desktop.  It can inform and warn you about various
+things, like that one partition that is nearly full again or that your
+ISP mail server is currently unreachable.
 
 nomd is not designed to be deployed on a server farm with hundreds of
 systems and provide instant alerts, graphs and statistics.  There are
@@ -36,6 +34,8 @@ features
 * self documenting
   - `nomdoc` shows all available commands and explains their use
   - `nomdep` shows missing dependencies (binaries, Perl modules)
+* no special privileges required
+  - all default command should run as a normal user, no root needed
 
 quick start
 -----------
@@ -145,6 +145,41 @@ You can implement custom commands either directly in your
 If your standalone custom commands might be useful for other people,
 feel free to send me a pull request so they can be included in the
 nomd distribution :-)
+
+running nomd
+------------
+
+To start nomd, you must change into the installation directory and run
+`./nomd`.  Alternatively, you can run `make` or `make run`, but this
+does not allow you to pass parameters to your scripts.
+
+nomd runs the configured *checks*, sends any *notifications* and
+exits.
+
+### irregular runs
+
+On desktop systems a good way to run nomd would be on every logon.
+Depending in your system configuration, it could suffice to add this
+line to your `~/.xinitrc`:
+
+```
+( cd git/nomd; ./nomd ) &
+```
+
+This will run nomd in the background so your login does not stall.  It
+expects the nomd installation directory to be `$HOME/git/nomd`.
+
+### regular runs
+
+Use a tool of your choice to run nomd regularly if your system is
+running continuously.
+
+If you use cron, the following crontab entry would run nomd twice a
+day if your installation directory is `$HOME/git/nomd`:
+
+```
+0 5,17	* * *	cd git/nomd; ./nomd
+```
 
 updates
 -------
