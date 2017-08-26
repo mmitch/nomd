@@ -31,7 +31,7 @@ check_ping_alive()
     # receive parameters and set defaults
     local HOST="${1:-localhost}"
 
-    if ping -w 5 -c 1 "$HOST" >/dev/null; then
+    if ping -W 5 -c 1 "$HOST" >/dev/null; then
 	echo "I:ping_alive:got response from $HOST"
     else
 	echo "C:ping_alive:no response from $HOST"
