@@ -185,9 +185,29 @@ sub print_apt($)
     printf "apt install %s\n", join(' ', @packages);
 }
 
+sub print_pkg($)
+{
+    my (@deps) = @_;
+
+    my @packages = map {
+	if ($_->{TYPE} eq 'perl') {
+	    sprintf "p5-%s", join('-', split(/::/, $_->{DEP}));
+	}
+	elsif ($_->{TYPE} eq 'shell') {
+	    # only take first option if there are more
+	    (split /\s/, $_->{DEP}, 2)[0];
+	}
+	else {
+	    $_->{DEP}
+	}
+    } @deps;
+
+    printf "pkg install %s\n", join(' ', @packages);
+}
+
 sub get_perl_deps()
 {
-    return map { extract_perl_dependencies($_)  } find_perl_files();
+    return map { extract_perl_dependencies($_) } find_perl_files();
 }
 
 sub get_shell_deps()
@@ -198,18 +218,20 @@ sub get_shell_deps()
 #################################
 
 my $help;
-my $cpanm;
 my $apt;
+my $cpanm;
+my $pkg;
 
-GetOptions('help' => \$help, 'apt' => \$apt, 'cpanm' => \$cpanm);
+GetOptions('help' => \$help, 'apt' => \$apt, 'cpanm' => \$cpanm, 'pkg' => \$pkg);
 
 if ($help) {
     print <<'EOF'
-usage:  nomdep [--help | --apt | --cpanm]
+usage:  nomdep [--help | --apt | --cpanm | --pkg]
 
 Call without parameters to list all missing dependencies.
 Use --cpanm to generate a cpanm command to install missing Perl libraries.
-Use --apt to try to guess package names to install missing dependencies.
+Use --apt to try to guess package names to install missing dependencies via apt.
+Use --pkg to try to guess package names to install missing dependencies via pkg.
 EOF
 	;
     exit 0;
@@ -227,11 +249,17 @@ elsif ($cpanm)
     @deps = get_perl_deps();
     $printer = \&print_cpanm;
 }
+elsif ($pkg)
+{
+    @deps = (get_perl_deps(), get_shell_deps());
+    $printer = \&print_pkg;
+}
 else {
     @deps = (get_perl_deps(), get_shell_deps());
     $printer = \&print_missing;
 }
 
-my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
+#my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
+my @missing = sort { sort_by_type_then_name() } group_by_line (@deps);
 $printer->(@missing);
 

@@ -77,6 +77,10 @@ If you use the `apt` package manager, `./nomdep --apt` tries to guess
 missing package names for you.  This is quite wobbly, but might save
 you some searching and typing in simple cases.
 
+If you use the `pkg` package manager, `./nomdep --pkg` tries to guess
+missing package names for you.  This is quite wobbly, but might save
+you some searching and typing in simple cases.
+
 If you manage local Perl packages via `cpanm`, run `./nomdep --cpanm`
 to print a command to install all missing Perl packages at once.  The
 output should be usable for other Perl package managers, too.
