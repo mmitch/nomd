@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
