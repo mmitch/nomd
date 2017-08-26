@@ -31,5 +31,5 @@ check_diskfree()
 	# -> provide empty stdin, otherwise we will wait for terminal input...
 	exec 0</dev/null
     fi
-    perl check/wrapper/diskfree.pl
+    perl check/wrapper/diskfree.pl || echo 'C:diskfree:error running Perl wrapper - missing modules?'
 }
