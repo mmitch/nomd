@@ -260,5 +260,5 @@ else {
 }
 
 my @missing = sort { sort_by_type_then_name() } grep { keep_missing($_) } group_by_line (@deps);
-$printer->(@missing);
+$printer->(@missing) if @missing;
 
