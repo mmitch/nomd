@@ -14,8 +14,9 @@ ISP mail server is currently unreachable.
 
 nomd is not designed to be deployed on a server farm with hundreds of
 systems and provide instant alerts, graphs and statistics.  There are
-various other tools for this kind of scenario (but see ^footnote in
-the resources chapter below).
+various other tools for this kind of scenario (but if you do look for
+a small and simple solution for some local statistic graphs, have a
+look at https://github.com/mmitch/rrd).
 
 features
 --------
@@ -197,12 +198,6 @@ resources
 
 Project homepage, git repository and bug tracker are available at
 https://github.com/mmitch/nomd
-
-^footnote  
-If you are by any chance looking for small and lightweight graph
-statistics for a single system, have a look at nomd's big sister
-project at https://github.com/mmitch/rrd (yes, the README is still
-missing over there)
 
 license
 -------
