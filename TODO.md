@@ -28,6 +28,11 @@ notifications
 * pushbullet
 * HTML nuggets to be included in a status page
   - hey, we don't want to be data-center grade :-)
+* "raw notifier" that just copies the check results to stdout
+  - could prepend the hostname to the CHECK field
+  - whole nomd invocation could then be run via ssh or inetd
+  - network alert gathering (pull mode) for free!
+    - hey, we DON'T WANT to be data-center grade!
 
 internals
 ---------
