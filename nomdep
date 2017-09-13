@@ -169,7 +169,16 @@ sub print_apt($)
 {
     my (@deps) = @_;
 
+    my %APT_MAP = ('notify-send' => 'libnotify-bin');
+    
     my @packages = map {
+	if (exists $APT_MAP{$_}) {
+	    $APT_MAP{$_}
+	}
+	else {
+	    $_
+	}
+    } map {
 	if ($_->{TYPE} eq 'perl') {
 	    sprintf "lib%s-perl", join('-', split(/::/, lc($_->{DEP})));
 	}
