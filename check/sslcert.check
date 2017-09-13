@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP openssl
+##SHELLDEP date
+##SHELLDEP true
+
+check_sslcert_file()
+##CHECKDSC check for expiring ssl certificates in local files
+#
+##PARMNAME $*
+##PARMDESC file(s) to check (supports non-quoted shell wildcards in call)
+##PARMDFLT /etc/ssl/certs/ssl-cert-snakeoil.pem
+{
+    # set defaults
+    if [ -z "$*" ]; then
+	set -- /etc/ssl/certs/ssl-cert-snakeoil.pem
+    fi
+
+    # check files
+    for FILE in "$@"; do
+	if [ -e "$FILE" ]; then
+	    _check_cert_validity 'sslcert_file' "file $FILE" < "$FILE"
+	else
+	    echo "C:sslcert_file:missing file $FILE"
+	fi
+    done
+}
+
+check_sslcert_tcp()
+##CHECKDSC check for expiring ssl certificates via tcp connect to ssl enabled service
+##CHECKDSC note: use check_sslcert_https() for https checks with virtual hosts
+#
+##PARMNAME $1
+##PARMDESC host to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 443
+{
+    # receive parameters and set defaults
+    local HOST=${1:-localhost}
+    local PORT=${2:-443}
+
+    # check ssl service
+    true | openssl s_client -connect $HOST:$PORT 2>/dev/null | _check_cert_validity 'sslcert_tcp' "$HOST:$PORT"
+}
+
+check_sslcert_https()
+##CHECKDSC check for expiring ssl certificates via https connect to ssl enabled webserver
+#
+##PARMNAME $1
+##PARMDESC hostname to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 443
+{
+    # receive parameters and set defaults
+    local HOST=${1:-localhost}
+    local PORT=${2:-443}
+
+    # check ssl service
+    true | openssl s_client -connect $HOST:$PORT -servername $HOST 2>/dev/null | _check_cert_validity 'sslcert_https' "$HOST:$PORT"
+}
+
+_CHECK_CERT_NOWSECS=$(date +%s)
+
+_check_cert_validity()
+{
+    local CHECK_NAME=$1 CHECK_OBJECT="$2"
+
+    local ENDDATE="$(LANG=C openssl x509 -enddate -noout -in /dev/stdin  | cut -f 2 -d =)"
+    local ENDSECS="$(date --date "$ENDDATE" +%s)"
+    local SECONDS_LEFT=$(( $ENDSECS - $_CHECK_CERT_NOWSECS ))
+    local DAYS_LEFT=$(( $SECONDS_LEFT / ( 60 * 60 * 24 ) ))
+
+    local SEVERITY=I
+    if [ $DAYS_LEFT -le 7 ]; then
+	SEVERITY=C
+    elif [ $DAYS_LEFT -le 45 ]; then
+	SEVERITY=W
+    fi
+
+    echo "$SEVERITY:$CHECK_NAME:$DAYS_LEFT days left on $CHECK_OBJECT"
+}
