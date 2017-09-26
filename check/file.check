@@ -19,6 +19,43 @@
 # along with nomd.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+##SHELLDEP stat
+
+check_file_owner()
+##CHECKDSC checks the ownership of one or more files
+#
+##PARMNAME $1
+##PARMDESC expected username and group name separated by :
+##PARMDFLT root:root
+#
+##PARMNAME $*
+##PARMDESC file(s) to check (supports non-quoted shell wildcards in call)
+##PARMDFLT nomd
+{
+    # receive parameters
+    local EXPECTED="${1:-root:root}"
+    shift 1
+    
+    # set defaults
+    if [ -z "$*" ]; then
+	set -- nomd
+    fi
+
+    # check files
+    for FILE in "$@"; do
+	if [ -e "$FILE" ]; then
+	    ACTUAL="$(stat -c %U:%G "$FILE")"
+	    if [ "$ACTUAL" = "$EXPECTED" ]; then
+		echo "C:file_owner:$FILE owned by $ACTUAL"
+	    else
+		echo "C:file_owner:$FILE owned by $ACTUAL instead of $EXPECTED"
+	    fi
+	else
+	    echo "C:file_owner:$FILE is missing"
+	fi
+    done
+}
+
 ##SHELLDEP find
 ##SHELLDEP grep
 ##SHELLDEP wc
