@@ -46,7 +46,7 @@ check_file_owner()
 	if [ -e "$FILE" ]; then
 	    ACTUAL="$(stat -c %U:%G "$FILE")"
 	    if [ "$ACTUAL" = "$EXPECTED" ]; then
-		echo "C:file_owner:$FILE owned by $ACTUAL"
+		echo "I:file_owner:$FILE owned by $ACTUAL"
 	    else
 		echo "C:file_owner:$FILE owned by $ACTUAL instead of $EXPECTED"
 	    fi
