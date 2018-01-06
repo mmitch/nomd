@@ -31,7 +31,7 @@ check_nomd_updates()
 	return
     fi
 
-    # update remote refs (needs to be completely silenced - good lock with actual bugs...)
+    # update remote refs (needs to be completely silenced - good luck with actual bugs...)
     git remote update >/dev/null 2>/dev/null
 
     # get latest local, upstream and common commit
