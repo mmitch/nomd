@@ -202,7 +202,7 @@ https://github.com/mmitch/nomd
 license
 -------
 
-Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>  
+Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>  
 Licensed under GNU GPL v3 or later.
 
 nomd is free software: you can redistribute it and/or modify
