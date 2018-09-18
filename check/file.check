@@ -233,39 +233,41 @@ check_dir_newer_in()
     _check_newer 'dir_newer_in' 'dir' '1' "$DIR" "$AMOUNT" "$TYPE"
 }
 
+check_file_no_older_in()
+##CHECKDSC check that in a given directory (no recursion) all files have
+##CHECKDSC have been modified in the given interval (no filder older than
+##CHECKDSC the time interval)
+#
+##PARMNAME $1
+##PARMDESC the directory to check
+##PARMDFLT . (current directory)
+#
+##PARMNAME $2
+##PARMDESC time interval numeric: eg. 30 for 30 minutes
+##PARMDFLT 1
+#
+##PARMNAME $3
+##PARMDESC time interval type: m=minutes, h=hours, d=days, w=weeks
+##PARMDFLT d
+{
+    # receive parameters and set defaults
+    local DIR="${1:-.}"
+    local AMOUNT=${2:-1}
+    local TYPE=${3:-d}
+
+    # delegate
+    _check_no_older 'file_no_older_in' 'file' '1' "$DIR" "$AMOUNT" "$TYPE"
+}
+
 _check_newer()
 {
     local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4" AMOUNT=$5 TYPE=$6
 
     # sanity check
-    if [ $MAXDEPTH = 0 -a $FILETYPE = file ]; then
-	if [ ! -f "$START" ]; then
-	    echo "C:$CHECK:$START is no file!"
-	    return
-	fi
-    else
-	if [ ! -d "$START" ]; then
-	    echo "C:$CHECK:$START is no directory!"
-	    return
-	fi
-    fi
+    _check_filetype $CHECK $FILETYPE $MAXDEPTH "$START" || return 0
 
-    # calculate timespan
-    case $TYPE in
-	m)
-	    MINUTES=$AMOUNT
-	    ;;
-	h)
-	    MINUTES=$(( AMOUNT * 60 ))
-	    ;;
-	d)
-	    MINUTES=$(( AMOUNT * 60 * 24 ))
-	    ;;
-	w)
-	    MINUTES=$(( AMOUNT * 60 * 24 * 7 ))
-	    ;;
-    esac
-	
+    local MINUTES=$(_timestamp_to_minutes $AMOUNT $TYPE)
+
     # check files
     FOUND=$(find "$START" -maxdepth $MAXDEPTH -type ${FILETYPE:0:1} -mmin -$MINUTES 2>/dev/null | wc -l)
     if [ $FOUND -gt 0 ]; then
@@ -281,4 +283,69 @@ _check_newer()
 	    echo "C:$CHECK:$START contains no $FILETYPE newer than $AMOUNT$TYPE"
 	fi
     fi
+}
+
+_check_no_older()
+{
+    local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4" AMOUNT=$5 TYPE=$6
+
+    # sanity check
+    _check_filetype $CHECK $FILETYPE $MAXDEPTH "$START" || return 0
+
+    local MINUTES=$(_timestamp_to_minutes $AMOUNT $TYPE)
+
+    # check files
+    FOUND=$(find "$START" -maxdepth $MAXDEPTH -type ${FILETYPE:0:1} -mmin +$MINUTES 2>/dev/null | wc -l)
+    if [ $FOUND -gt 0 ]; then
+	if [ $MAXDEPTH = 0 ]; then
+	    echo "C:$CHECK:$START is $FILETYPE older than $AMOUNT$TYPE"
+	else
+	    echo "C:$CHECK:$START contains $FOUND $FILETYPE(s) older than $AMOUNT$TYPE"
+	fi
+    else
+	if [ $MAXDEPTH = 0 ]; then
+	    echo "I:$CHECK:$START is no $FILETYPE older than $AMOUNT$TYPE"
+	else
+	    echo "I:$CHECK:$START contains no $FILETYPE older than $AMOUNT$TYPE"
+	fi
+    fi
+}
+
+_check_filetype()
+{
+    local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4"
+    
+    if [ $MAXDEPTH = 0 -a $FILETYPE = file ]; then
+	if [ ! -f "$START" ]; then
+	    echo "C:$CHECK:$START is no file!"
+	    return 1
+	fi
+    else
+	if [ ! -d "$START" ]; then
+	    echo "C:$CHECK:$START is no directory!"
+	    return 1
+	fi
+    fi
+    return 0
+}
+
+_timestamp_to_minutes()
+{
+    local AMOUNT=$1 TYPE=$2
+
+    # calculate timespan
+    case $TYPE in
+	m)
+	    echo $AMOUNT
+	    ;;
+	h)
+	    echo $(( AMOUNT * 60 ))
+	    ;;
+	d)
+	    echo $(( AMOUNT * 60 * 24 ))
+	    ;;
+	w)
+	    echo $(( AMOUNT * 60 * 24 * 7 ))
+	    ;;
+    esac
 }
