@@ -22,7 +22,7 @@
 ##SHELLDEP stat
 
 check_file_owner()
-##CHECKDSC checks the ownership of one or more files
+##CHECKDSC check the ownership of one or more files
 #
 ##PARMNAME $1
 ##PARMDESC expected username and group name separated by :
@@ -235,7 +235,7 @@ check_dir_newer_in()
 
 check_file_no_older_in()
 ##CHECKDSC check that in a given directory (no recursion) all files have
-##CHECKDSC have been modified in the given interval (no filder older than
+##CHECKDSC have been modified in the given interval (no file older than
 ##CHECKDSC the time interval)
 #
 ##PARMNAME $1
