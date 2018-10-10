@@ -38,5 +38,5 @@ check_load()
 
     # get load via uptime(1)
     # delegate computation to perl (bash can't to float math)
-    LANG=C uptime | check/wrapper/load.pl "$CRITICAL" "$WARNING"
+    LC_ALL=C uptime | check/wrapper/load.pl "$CRITICAL" "$WARNING"
 }
