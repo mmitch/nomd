@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017,2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -21,8 +21,8 @@
 
 set -e
 
-if [ $BASH_VERSINFO -lt 4 ]; then
-    echo nomd needs at least bash 4, your version is $BASH_VERSION
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "nomd needs at least bash 4, your version is $BASH_VERSION"
     exit 1
 fi
 
@@ -57,9 +57,11 @@ trap on_exit_or_error EXIT
 # run checks
 (
     for CHECK in check/*.check ; do
+	# shellcheck source=/dev/null
 	source "$CHECK"
     done
     for TOOL in tool/*.tool ; do
+	# shellcheck source=/dev/null
 	source "$TOOL"
     done
     if [ -e check.local ]; then
@@ -68,13 +70,10 @@ trap on_exit_or_error EXIT
 	echo 'I:nomd_checks:no check.local found, using check.default instead'
 	source check.default
     fi
-
-    # remove progress bar if interactive
-
 ) 3>&1 > "$NOMD_CHECK_RESULTS" 2> "$NOMD_CHECK_STDERR" 
 
 # append meta errors from checks
-while read LINE; do
+while read -r LINE; do
     echo "C:nomd_checks:$LINE"
 done < "$NOMD_CHECK_STDERR" >> "$NOMD_CHECK_RESULTS"
 
@@ -82,17 +81,21 @@ done < "$NOMD_CHECK_STDERR" >> "$NOMD_CHECK_RESULTS"
 NOMD_CRIT_COUNT=$(grep -c ^C "$NOMD_CHECK_RESULTS" || true)
 NOMD_WARN_COUNT=$(grep -c ^W "$NOMD_CHECK_RESULTS" || true)
 NOMD_INFO_COUNT=$(grep -c ^I "$NOMD_CHECK_RESULTS" || true)
-if [ $NOMD_CRIT_COUNT -gt 0 ]; then
+if [ "$NOMD_CRIT_COUNT" -gt 0 ]; then
     NOMD_HIGHEST_SEVERITY=C
-elif [ $NOMD_WARN_COUNT -gt 0 ]; then
+elif [ "$NOMD_WARN_COUNT" -gt 0 ]; then
     NOMD_HIGHEST_SEVERITY=W
-else
+elif [ "$NOMD_INFO_COUNT" -gt 0 ]; then
     NOMD_HIGHEST_SEVERITY=I
+else
+    # shellcheck disable=SC2034
+    NOMD_HIGHEST_SEVERITY='?'
 fi
 
 # run notifications
 (
     for NOTIFY in notify/*.notify; do
+	# shellcheck source=/dev/null
 	source "$NOTIFY"
     done
     if [ -e notify.local ]; then
