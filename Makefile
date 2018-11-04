@@ -14,7 +14,7 @@ clean:
 test-perl: $(PERL_SOURCES)
 	@for FILE in $(PERL_SOURCES); do perl -c "$$FILE" || exit 1; done
 
-test-bash: $(PERL_SOURCES)
+test-bash: $(BASH_SOURCES)
 	@for FILE in $(BASH_SOURCES); do bash -n "$$FILE" && echo "$$FILE syntax OK" || exit 1; done
 
 test: test-perl test-bash
