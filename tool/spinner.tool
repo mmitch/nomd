@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -25,7 +25,7 @@
 NOMD_SPINNER=
 NOMD_SPINNER_INDEX=0
 declare -A NOMD_SPINNER_CHARS
-NOMD_SPINNER_CHARS=( [0]='-' [1]='\\' [2]='|' [3]='/' )
+NOMD_SPINNER_CHARS=( [0]="-" [1]="\\" [2]="|" [3]="/" )
 
 # enable spinner (only if on interactive terminal)
 spinner_start()

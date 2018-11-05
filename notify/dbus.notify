@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -39,7 +39,7 @@ notify_dbus()
     # send messages
     local LINE
     grep -E "$FILTER" "$NOMD_CHECK_RESULTS" | \
-	while read LINE; do
-	    notify-send -u ${URG[${LINE:0:1}]} "$LINE"
+	while read -r LINE; do
+	    notify-send -u "${URG[${LINE:0:1}]}" "$LINE"
 	done
 }

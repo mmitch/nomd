@@ -264,20 +264,21 @@ _check_newer()
     local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4" AMOUNT=$5 TYPE=$6
 
     # sanity check
-    _check_filetype $CHECK $FILETYPE $MAXDEPTH "$START" || return 0
+    _check_filetype "$CHECK" "$FILETYPE" "$MAXDEPTH" "$START" || return 0
 
-    local MINUTES=$(_timestamp_to_minutes $AMOUNT $TYPE)
+    local MINUTES
+    MINUTES=$(_timestamp_to_minutes "$AMOUNT" "$TYPE")
 
     # check files
-    FOUND=$(find "$START" -maxdepth $MAXDEPTH -type ${FILETYPE:0:1} -mmin -$MINUTES 2>/dev/null | wc -l)
-    if [ $FOUND -gt 0 ]; then
-	if [ $MAXDEPTH = 0 ]; then
+    FOUND=$(find "$START" -maxdepth "$MAXDEPTH" -type "${FILETYPE:0:1}" -mmin -"$MINUTES" 2>/dev/null | wc -l)
+    if [ "$FOUND" -gt 0 ]; then
+	if [ "$MAXDEPTH" = 0 ]; then
 	    echo "I:$CHECK:$START is $FILETYPE newer than $AMOUNT$TYPE"
 	else
 	    echo "I:$CHECK:$START contains $FOUND $FILETYPE(s) newer than $AMOUNT$TYPE"
 	fi
     else
-	if [ $MAXDEPTH = 0 ]; then
+	if [ "$MAXDEPTH" = 0 ]; then
 	    echo "C:$CHECK:$START is no $FILETYPE newer than $AMOUNT$TYPE"
 	else
 	    echo "C:$CHECK:$START contains no $FILETYPE newer than $AMOUNT$TYPE"
@@ -290,20 +291,21 @@ _check_no_older()
     local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4" AMOUNT=$5 TYPE=$6
 
     # sanity check
-    _check_filetype $CHECK $FILETYPE $MAXDEPTH "$START" || return 0
+    _check_filetype "$CHECK" "$FILETYPE" "$MAXDEPTH" "$START" || return 0
 
-    local MINUTES=$(_timestamp_to_minutes $AMOUNT $TYPE)
+    local MINUTES
+    MINUTES=$(_timestamp_to_minutes "$AMOUNT" "$TYPE")
 
     # check files
-    FOUND=$(find "$START" -maxdepth $MAXDEPTH -type ${FILETYPE:0:1} -mmin +$MINUTES 2>/dev/null | wc -l)
-    if [ $FOUND -gt 0 ]; then
-	if [ $MAXDEPTH = 0 ]; then
+    FOUND=$(find "$START" -maxdepth "$MAXDEPTH" -type "${FILETYPE:0:1}" -mmin +"$MINUTES" 2>/dev/null | wc -l)
+    if [ "$FOUND" -gt 0 ]; then
+	if [ "$MAXDEPTH" = 0 ]; then
 	    echo "C:$CHECK:$START is $FILETYPE older than $AMOUNT$TYPE"
 	else
 	    echo "C:$CHECK:$START contains $FOUND $FILETYPE(s) older than $AMOUNT$TYPE"
 	fi
     else
-	if [ $MAXDEPTH = 0 ]; then
+	if [ "$MAXDEPTH" = 0 ]; then
 	    echo "I:$CHECK:$START is no $FILETYPE older than $AMOUNT$TYPE"
 	else
 	    echo "I:$CHECK:$START contains no $FILETYPE older than $AMOUNT$TYPE"
@@ -315,7 +317,7 @@ _check_filetype()
 {
     local CHECK=$1 FILETYPE=$2 MAXDEPTH=$3 START="$4"
     
-    if [ $MAXDEPTH = 0 -a $FILETYPE = file ]; then
+    if [ "$MAXDEPTH" = 0 ] && [ "$FILETYPE" = file ]; then
 	if [ ! -f "$START" ]; then
 	    echo "C:$CHECK:$START is no file!"
 	    return 1
@@ -336,7 +338,7 @@ _timestamp_to_minutes()
     # calculate timespan
     case $TYPE in
 	m)
-	    echo $AMOUNT
+	    echo "$AMOUNT"
 	    ;;
 	h)
 	    echo $(( AMOUNT * 60 ))

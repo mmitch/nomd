@@ -26,12 +26,12 @@ check_http_status
 check_http_content
 
 # check systemctl (if available) for failed units
-which systemctl >/dev/null && check_systemctl
+command -v systemctl >/dev/null && check_systemctl
 
 # run check_apt only on systems that have apt available
 # the regexp tries to match both Ubuntu and Debian security sources
 # BUT SEEMS TO FAIL ON DEBIAN - better use no parameter at all!
-which apt >/dev/null && check_apt '(/updates|-security)'
+command -v apt >/dev/null && check_apt '(/updates|-security)'
 
 # check for updates
 check_nomd_updates

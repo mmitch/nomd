@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -35,13 +35,14 @@ check_apt()
     local CRIT_RE="${1:-.}"
 
     # count pending updates
-    local COUNT_WARN=$(_get_apt_updatables | wc -l)
-    local COUNT_CRIT=$(_get_apt_updatables | grep -c -E "$CRIT_RE" || true)
+    local COUNT_WARN COUNT_CRIT
+    COUNT_WARN=$(_get_apt_updatables | wc -l)
+    COUNT_CRIT=$(_get_apt_updatables | grep -c -E "$CRIT_RE" || true)
 
     # output
-    if [ $COUNT_CRIT -gt 0 ]; then
+    if [ "$COUNT_CRIT" -gt 0 ]; then
 	echo "C:apt:${COUNT_CRIT} pending possibly security related updates (${COUNT_WARN} pending updates altogether)"
-    elif [ $COUNT_WARN -gt 0 ]; then
+    elif [ "$COUNT_WARN" -gt 0 ]; then
 	echo "W:apt:${COUNT_WARN} pending updates"
     else
 	echo 'I:apt:no pending updates'

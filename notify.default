@@ -1,5 +1,5 @@
 # show interesting stuff via dbus if available
-[ "$DBUS_SESSION_BUS_ADDRESS" ] && which notify-send && notify_dbus ^[CW]
+[ "$DBUS_SESSION_BUS_ADDRESS" ] && command -v notify-send >/dev/null && notify_dbus ^[CW]
 
 # print everything to stdout
 notify_stdout

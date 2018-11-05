@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -34,14 +34,15 @@ check_http_status()
 ##PARMDESC expected HTTP status code
 ##PARMDFLT 200
 {
-    [ $CHECK_HTTP_HEAD_BINARY ] || _determine_http_head_binary
+    [ "$CHECK_HTTP_HEAD_BINARY" ] || _determine_http_head_binary
 
     # receive parameters and set defaults
     local URL="${1:-http://www.example.com/}"
     local EXPECTED_STATUS="${2:-200}" 
 
     # get status
-    local STATUS=$(_get_http_status "$URL")
+    local STATUS
+    STATUS=$(_get_http_status "$URL")
     if [ "$STATUS" == "$EXPECTED_STATUS" ]; then
 	echo "I:http_status:$STATUS as expected on $URL"
     else
@@ -52,11 +53,11 @@ check_http_status()
 # cache selected binary in $CHECK_HTTP_HEAD_BINARY
 _determine_http_head_binary()
 {
-    if which wget >/dev/null; then
+    if command -v wget >/dev/null; then
 	CHECK_HTTP_HEAD_BINARY=wget
-    elif which curl >/dev/null; then
+    elif command -v curl >/dev/null; then
 	CHECK_HTTP_HEAD_BINARY=curl
-    elif which HEAD >/dev/null; then
+    elif command -v HEAD >/dev/null; then
 	CHECK_HTTP_HEAD_BINARY=lwp
     fi
 
@@ -73,19 +74,19 @@ _get_http_status()
 
     case $CHECK_HTTP_HEAD_BINARY in
 	wget)
-	    local STATUS DUMMY
-	    read DUMMY STATUS DUMMY <<< $(wget --server-response --spider example.com 2>&1 | grep '^  HTTP')
-	    echo $STATUS
-	;;
+	    local -a STATUS
+	    read -r -a STATUS <<< "$(wget --server-response --spider example.com 2>&1 | grep '^  HTTP')"
+	    echo "${STATUS[1]}"
+	    ;;
 
 	curl)
 	    curl -o /dev/null --silent --head --write-out '%{http_code}\n' "$URL"
 	    ;;
 	
 	lwp)
-	    local STATUS DUMMY
-	    read STATUS DUMMY <<< $(HEAD "$URL")
-	    echo $STATUS
+	    local -a STATUS
+	    read -r -a STATUS <<< "$(HEAD "$URL")"
+	    echo "${STATUS[0]}"
 	    ;;
     esac
 }

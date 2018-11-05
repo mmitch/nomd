@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -40,7 +40,7 @@ check_tcp_connect()
     local PORT="${2:-9}" 
 
     # check
-    if </dev/tcp/$HOST/$PORT; then
+    if :<"/dev/tcp/$HOST/$PORT"; then
 	echo "I:tcp_connect:connect on $HOST:$PORT"
     else
 	echo "C:tcp_connect:no connect on $HOST:$PORT"
@@ -71,7 +71,7 @@ check_tcp_banner()
     # the trick is that the redirections are processed in order:
     # $TEMPFILE is only created if the TCP connect was successful
     local TEMPFILE="$NOMD_TEMP_DIR/check_tcp_banner"
-    timeout 3 cat 2>/dev/null </dev/tcp/$HOST/$PORT >"$TEMPFILE" || true
+    timeout 3 cat 2>/dev/null <"/dev/tcp/$HOST/$PORT" >"$TEMPFILE" || true
     if [ -e "$TEMPFILE" ]; then
 	if grep -q -E "$EXPECTED_RE" "$TEMPFILE"; then
 	    echo "I:tcp_banner:content ok on $HOST:$PORT ($EXPECTED_RE)"
