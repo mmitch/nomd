@@ -75,7 +75,7 @@ _get_http_status()
     case $CHECK_HTTP_HEAD_BINARY in
 	wget)
 	    local -a STATUS
-	    read -r -a STATUS <<< "$(wget --server-response --spider example.com 2>&1 | grep '^  HTTP')"
+	    read -r -a STATUS <<< "$(wget --server-response --spider "$URL" 2>&1 | grep '^  HTTP')"
 	    echo "${STATUS[1]}"
 	    ;;
 
