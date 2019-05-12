@@ -26,31 +26,26 @@ check_dns()
 ##CHECKDSC check a response from DNS
 #
 ##PARMNAME $1
-##PARMDESC IP address or hostname of the nameserver to query
-##PARMDFLT none
-#
-##PARMNAME $2
 ##PARMDESC query value (eg. hostname)
 ##PARMDFLT none
 #
-##PARMNAME $3
+##PARMNAME $2
 ##PARMDESC expected response (eg. IP address)
 ##PARMDFLT none
 #
-##PARMNAME $4
+##PARMNAME $3
 ##PARMDESC query type (eg. A or AAAA)
 ##PARMDFLT A
 #
+##PARMNAME $4
+##PARMDESC IP address or hostname of the nameserver to query
+##PARMDFLT none (use system default)
+#
 {
     # receive parameters
-    local NAMESERVER="$1" QUERY="$2" EXPECTED="$3" TYPE="${4:-A}"
+    local QUERY="$1" EXPECTED="$2" TYPE="${3:-A}" NAMESERVER="$4" 
 
     # check parameters
-    if [ -z "$NAMESERVER" ]; then
-	echo 'C:dns:no NAMESERVER given'
-	return
-    fi
-
     if [ -z "$QUERY" ]; then
 	echo 'C:dns:no QUERY VALUE given'
 	return
@@ -62,14 +57,18 @@ check_dns()
 	return
     fi
 
-
     if [ -z "$TYPE" ]; then
 	echo 'C:dns:no QUERY TYPE given'
 	return
     fi
 
     # check DNS
-    ACTUAL="$(dig "$TYPE" "$QUERY" @"$NAMESERVER" +short | tail -n 1)"
+    if [ "$NAMESERVER" ]; then
+	ACTUAL="$(dig "$TYPE" "$QUERY" @"$NAMESERVER" +short | tail -n 1)"
+    else
+	ACTUAL="$(dig "$TYPE" "$QUERY" +short | tail -n 1)"
+	NAMESERVER="system resolver"
+    fi
 
     # output
     if [ "$ACTUAL" != "$EXPECTED" ]; then
@@ -127,7 +126,7 @@ _dig_serial()
 {
     local DOMAIN="$1" SERVER="$2"
     dig SOA "$DOMAIN" @"$SERVER" +short | (
-	read -r PRIMARY CONTACT SERIAL TTLS
+	read -r _ _ SERIAL _ _ _ _
 	echo "$SERIAL"
     )
 }
