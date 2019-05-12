@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2019  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP dig
+##SHELLDEP tail
+
+check_dns()
+##CHECKDSC check a response from DNS
+#
+##PARMNAME $1
+##PARMDESC IP address or hostname of the nameserver to query
+##PARMDFLT none
+#
+##PARMNAME $2
+##PARMDESC query value (eg. hostname)
+##PARMDFLT none
+#
+##PARMNAME $3
+##PARMDESC expected response (eg. IP address)
+##PARMDFLT none
+#
+##PARMNAME $4
+##PARMDESC query type (eg. A or AAAA)
+##PARMDFLT A
+#
+{
+    # receive parameters
+    local NAMESERVER="$1" QUERY="$2" EXPECTED="$3" TYPE="${4:-A}"
+
+    # check parameters
+    if [ -z "$NAMESERVER" ]; then
+	echo 'C:dns:no NAMESERVER given'
+	return
+    fi
+
+    if [ -z "$QUERY" ]; then
+	echo 'C:dns:no QUERY VALUE given'
+	return
+    fi
+
+
+    if [ -z "$EXPECTED" ]; then
+	echo 'C:dns:no EXPECTED RESPONSE given'
+	return
+    fi
+
+
+    if [ -z "$TYPE" ]; then
+	echo 'C:dns:no QUERY TYPE given'
+	return
+    fi
+
+    # check DNS
+    ACTUAL="$(dig "$TYPE" "$QUERY" @"$NAMESERVER" +short | tail -n 1)"
+
+    # output
+    if [ "$ACTUAL" != "$EXPECTED" ]; then
+	echo "C:dns:dns query $TYPE $QUERY on $NAMESERVER returned $ACTUAL instead of $EXPECTED"
+    else
+	echo "I:dns:dns query $TYPE $QUERY on $NAMESERVER returned $ACTUAL as expected"
+    fi
+    
+}
+
+check_dns_serial()
+##CHECKDSC check that multiple nameservers have the same serial for a zone
+#
+##PARMNAME $1
+##PARMDESC domain/zone to check
+##PARMDFLT none
+#
+##PARMNAME $*
+##PARMDESC IP addresses or hostnames of the nameservers to check
+##PARMDESC (at least two nameservers should be given to have something to test and compare)
+##PARMDFLT none
+#
+{
+    # receive parameters
+    local DOMAIN="$1" FIRST_NAMESERVER="$2"
+    shift 2
+
+    # check parameters
+    if [ -z "$DOMAIN" ]; then
+	echo 'C:dns_serial:no DOMAIN given'
+	return
+    fi
+
+    if [ -z "$FIRST_NAMESERVER" ]; then
+	echo 'C:dns_serial:no NAMESERVERS given'
+	return
+    fi
+
+    # get value for comparisons
+    FIRST_SERIAL="$(_dig_serial "$DOMAIN" "$FIRST_NAMESERVER")"
+    echo "I:dns_serial:domain $DOMAIN has serial $FIRST_SERIAL on server $FIRST_NAMESERVER"
+
+    for NAMESERVER in "$@"; do
+	SERIAL="$(_dig_serial "$DOMAIN" "$NAMESERVER")"
+	if [ "$SERIAL" != "$FIRST_SERIAL" ]; then
+	    echo "C:dns_serial:domain $DOMAIN serial $SERIAL on server $NAMESERVER does not match serial $FIRST_SERIAL on server $FIRST_NAMESERVER"
+	else
+	    echo "I:dns_serial:domain $DOMAIN has serial $SERIAL on server $NAMESERVER"
+	fi
+    done
+    
+}
+
+_dig_serial()
+{
+    local DOMAIN="$1" SERVER="$2"
+    dig SOA "$DOMAIN" @"$SERVER" +short | (
+	read -r PRIMARY CONTACT SERIAL TTLS
+	echo "$SERIAL"
+    )
+}
