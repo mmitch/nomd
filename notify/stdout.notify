@@ -44,6 +44,6 @@ notify_stdout()
     local LINE
     grep -E "$FILTER" "$NOMD_CHECK_RESULTS" | \
 	while IFS=: read -r SEV CHECK LINE; do
-	    printf "%s  %s  %s\n" "${SEVERITY[$SEV]}" "$CHECK" "$LINE" 
+	    printf "%s  %s  %s\\n" "${SEVERITY[$SEV]}" "$CHECK" "$LINE" 
 	done
 }

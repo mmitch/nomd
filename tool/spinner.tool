@@ -40,12 +40,12 @@ spinner_stop()
 {
     [ "$NOMD_SPINNER" ] || return 0
     trap DEBUG
-    echo -en "\b \b" >&3
+    echo -en "\\b \\b" >&3
 }
 
 on_spinner()
 {
-    echo -en "\b${NOMD_SPINNER_CHARS[$NOMD_SPINNER_INDEX]}" >&3
+    echo -en "\\b${NOMD_SPINNER_CHARS[$NOMD_SPINNER_INDEX]}" >&3
     if [ $NOMD_SPINNER_INDEX = 3 ]; then
 	NOMD_SPINNER_INDEX=0
     else
