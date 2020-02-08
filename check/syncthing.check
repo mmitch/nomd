@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2020  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP find
+##SHELLDEP grep
+##SHELLDEP sed
+
+check_syncthing()
+##CHECKDSC check syncthing folders for conflicts
+#
+##PARMNAME $1
+##PARMDESC location of syncthing configuration file
+##PARMDFLT ~/.config/syncthing/config.xml
+#
+{
+    # receive parameters and set defaults
+    local config="${1:-$HOME/.config/syncthing/config.xml}"
+
+    # extract folders
+    # this SHOULD be replaced by proper XML parsing
+    grep '<folder' "$config" |  sed -e 's/^.*path="//' -e 's/" .*$//' | while read -r folder; do
+
+	# check folder
+	local conflicts
+	conflicts=$(find "$folder" -regextype egrep -regex '.*conflict-[0-9]{8}-[0-9]{6}-[0-9A-Z]{7}.*' | wc -l)
+
+	# output
+	if [ "$conflicts" -gt 0 ]; then
+	    echo "C:syncthing:$conflicts conflicts in $folder"
+	else
+	    echo "I:syncthing:no conflicts in $folder"
+	fi
+
+    done
+}
