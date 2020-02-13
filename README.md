@@ -31,7 +31,7 @@ features
   - it's just a shell script, no need to learn a new language
 * maximum flexibility
   - configuration is just a shell script: use conditions, call
-	external tools, everything is possible
+    external tools, everything is possible
 * self documenting
   - `nomdoc` shows all available commands and explains their use
   - `nomdep` shows missing dependencies (binaries, Perl modules)
