@@ -25,7 +25,7 @@ notifications
 
 *Notifications* are called with these environment variables set:
 
-* `NOMD_CHECK_RESULTS` os pointing to a file with the complete results of
+* `NOMD_CHECK_RESULTS` is pointing to a file with the complete results of
   the preceding checks
 * `NOMD_CRIT_COUNT` holds the number of critical check results
 * `NOMD_WARN_COUNT` holds the number of warning check results
