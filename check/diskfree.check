@@ -22,23 +22,9 @@
 check_diskfree()
 ##CHECKDSC check free disk space
 #
-##PARMNAME stdin
-##PARMDESC mountpoints to skip, one regexp per line
+##PARMNAME $*
+##PARMDESC filesystem types to skip (eg. autofs, nfs or smb)
 ##PARMDFLT none
-{
-    if [ -t 0 ]; then
-	# stdin is terminal, so no stdin given
-	# -> provide empty stdin, otherwise we will wait for terminal input...
-	exec 0</dev/null
-    fi
-    perl check/wrapper/diskfree.pl || echo 'C:diskfree:error running Perl wrapper - missing modules?'
-}
-
-# this array can be tweaked if neccessary
-NOMD_NETWORK_FILESYSTEMS=(nfs smb)
-
-check_diskfree_nonet()
-##CHECKDSC check free disk space while skipping network file systems
 #
 ##PARMNAME stdin
 ##PARMDESC mountpoints to skip, one regexp per line
@@ -49,5 +35,5 @@ check_diskfree_nonet()
 	# -> provide empty stdin, otherwise we will wait for terminal input...
 	exec 0</dev/null
     fi
-    perl check/wrapper/diskfree.pl "${NOMD_NETWORK_FILESYSTEMS[@]}" || echo 'C:diskfree:error running Perl wrapper - missing modules?'
+    perl check/wrapper/diskfree.pl "$@" || echo 'C:diskfree:error running Perl wrapper - missing modules?'
 }
