@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2000  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -25,23 +25,23 @@ use warnings;
 use Filesys::Df;
 use Sys::Filesystem;
 
-my @skip;
+my @skip_mounts;
 
 while (my $line = <STDIN>) {
     chomp $line;
-    push @skip, qr($line);
+    push @skip_mounts, qr($line);
 }
 
-MOUNTPOINT: foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
-     
-    foreach my $skip (@skip) {
-	if ($mountpoint =~ /$skip/) {
-	    print "I:diskfree:skipped $mountpoint\n";
-	    next MOUNTPOINT;
+FS: foreach my $fs (Sys::Filesystem->new->mounted_filesystems) {
+
+    foreach my $skip_mount (@skip_mounts) {
+	if ($fs =~ /$skip_mount/) {
+	    print "I:diskfree:skipped $fs by mountpoint\n";
+	    next FS;
 	}
     }
      
-    my $df = df($mountpoint, 1024);
+    my $df = df($fs, 1024);
     next unless defined $df;
 
     my ($warn, $crit, $status) = (0, 0);
@@ -81,5 +81,5 @@ MOUNTPOINT: foreach my $mountpoint (Sys::Filesystem->new->mounted_filesystems) {
 	$sev = 'I';
     }
     
-    printf "%s:diskfree:%s on %s\n", $sev, $status, $mountpoint;
+    printf "%s:diskfree:%s on %s\n", $sev, $status, $fs;
 }
