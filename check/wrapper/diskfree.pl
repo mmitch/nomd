@@ -25,6 +25,7 @@ use warnings;
 use Filesys::Df;
 use Sys::Filesystem;
 
+my %skip_types = map { $_ => 1 } @ARGV;
 my @skip_mounts;
 
 while (my $line = <STDIN>) {
@@ -32,7 +33,13 @@ while (my $line = <STDIN>) {
     push @skip_mounts, qr($line);
 }
 
-FS: foreach my $fs (Sys::Filesystem->new->mounted_filesystems) {
+my $sysfs = Sys::Filesystem->new;
+FS: foreach my $fs ($sysfs->mounted_filesystems) {
+
+    if (exists $skip_types{$sysfs->type($fs)}) {
+	print "I:diskfree:skipped $fs by type\n";
+	next FS;
+    }
 
     foreach my $skip_mount (@skip_mounts) {
 	if ($fs =~ /$skip_mount/) {
