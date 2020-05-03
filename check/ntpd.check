@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2020  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP ntpq
+
+check_ntpd_status()
+##CHECKDSC check local NTP daemon status via ntpq command
+##CHECKDSC looks at available peers and current offset
+{
+    # get ntpq data
+    local ntpd
+    ntpd=$(ntpq -p)
+
+    if [ -z "$ntpd" ]; then
+	echo 'C:ntpd_status:ntpq binary missing or no output'
+	return
+    fi
+
+    # parse output
+    local selected=0 candidates=0 offset=9999
+    while read -r remote _ _ _ _ _ _ _ offset_ _; do
+	if [ "${remote:0:1}" = '+' ]; then
+	    ((candidates++))
+	elif [ "${remote:0:1}" = '*' ]; then
+	    ((selected++))
+	    offset=${offset_%%.*}
+	fi
+    done <<< "$ntpd"
+
+    # generate status
+    if [ "$selected" -lt 1 ]; then
+	echo "C:ntpd_status:no peer selected ($candidates alternatives)"
+	return
+    fi
+
+    local range=60
+    if [ "$offset" -lt -$range ] || [ "$offset" -gt $range ]; then
+	echo "C:ntpd_status:offset $offset more than ${range}ms"
+	return
+    fi
+
+    local warning=no
+
+    range=10
+    if [ "$offset" -lt -$range ] || [ "$offset" -gt $range ]; then
+	echo "W:ntpd_status:offset $offset more than ${range}ms"
+	warning=yes
+    fi
+
+    range=2
+    if [ "$candidates" -lt $range ]; then
+	echo "W:ntpd_status:only $candidates alternative peers (less than ${range})"
+	warning=yes
+    fi
+
+    if [ $warning = no ]; then
+	echo "I:ntpd_status:current offset ${offset}ms; $candidates alternative peers"
+    fi
+}
