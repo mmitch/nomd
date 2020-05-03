@@ -38,9 +38,9 @@ check_ntpd_status()
     local selected=0 candidates=0 offset=9999
     while read -r remote _ _ _ _ _ _ _ offset_ _; do
 	if [ "${remote:0:1}" = '+' ]; then
-	    ((candidates++))
+	    ((candidates++)) || true
 	elif [ "${remote:0:1}" = '*' ]; then
-	    ((selected++))
+	    ((selected++)) || true
 	    offset=${offset_%%.*}
 	fi
     done <<< "$ntpd"
