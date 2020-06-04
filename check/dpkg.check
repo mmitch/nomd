@@ -32,8 +32,8 @@ check_dpkg()
 
     # output
     if [ "$count" -gt 0 ]; then
-	echo "C:apt:${count} lines of output from dpkg --audit"
+	echo "C:dpkg:${count} lines of output from dpkg --audit"
     else
-	echo 'I:apt:no pending updates'
+	echo 'I:dpkg:dpkg --audit passed'
     fi
 }
