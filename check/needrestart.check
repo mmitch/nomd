@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2020  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP needrestart
+##SHELLDEP grep
+##SHELLDEP sed
+
+check_needrestart()
+##CHECKDSC find processes using outdated libraries usind needrestart
+##CHECKDSC note: this will only scan processes of the current user
+##CHECKDSC because system-wide needrestart scans need sudo(1)
+#
+##PARMNAME $1
+##PARMDESC needrestart binary location
+##PARMDFLT /usr/sbin/needrestart
+#
+{
+    # receive parameters and set defaults
+    local BINARY="${1:-/usr/sbin/needrestart}"
+
+    # read output into array
+    declare -a PROCESSES
+    readarray -t PROCESSES < <("$BINARY" -b | sed -n -e '/^NEEDRESTART-PID: /s/NEEDRESTART-PID: //' -e 's/=\([0-9]*\)/ (pid \1)/p')
+
+    # output
+    if [ ${#PROCESSES[@]} -gt 0 ]; then
+	local PROCESS
+	for PROCESS in "${PROCESSES[@]}"; do
+	    echo "C:needrestart:outdated user process $PROCESS"
+	done
+    else
+	echo "I:needrestart:no outdated user processes"
+    fi
+}
