@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2021  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP lsinitramfs
+##SHELLDEP grep
+
+check_initrd_modules()
+##CHECKDSC check that inird contains kernel modules
+#
+##PARMNAME $*
+##PARMDESC modules to look for (without .ko extension)
+##PARMDFLT none
+#
+{
+    # receive parameters
+    local modules="$*"
+
+    # prepare tempfile
+    local tempfile="$NOMD_TEMP_DIR/initrd_files"
+    
+    # iterate over initrds
+    for initrd in /boot/initrd.img*; do
+
+	# skip dkms backups
+	if [[ $initrd =~ .old-dkms$ ]]; then
+	    continue
+	fi
+
+	lsinitramfs "$initrd" > "$tempfile"
+
+	for module in $modules; do
+	    if grep -q -- "/$module.ko$" "$tempfile"; then
+		echo "I:initrd_modules:$initrd contains module $module"
+	    else
+		echo "C:initrd_modules:$initrd is missing module $module"
+	    fi
+	done
+	
+    done
+
+    # remove tempfile
+    rm -f "$tempfile"
+}
