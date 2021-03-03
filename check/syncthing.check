@@ -36,7 +36,7 @@ check_syncthing()
 
     # extract folders
     # this SHOULD be replaced by proper XML parsing
-    grep '<folder' "$config" |  sed -e 's/^.*path="//' -e 's/" .*$//' | while read -r folder; do
+    grep '<folder' "$config" | grep -v 'id=""' |  sed -e 's/^.*path="//' -e 's/" .*$//' | while read -r folder; do
 
 	# check folder
 	local conflicts
