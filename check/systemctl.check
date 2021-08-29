@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2021  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -25,18 +25,41 @@
 
 check_systemctl()
 ##CHECKDSC check systemctl for failed units
+#
+##PARMNAME $1
+##PARMDESC 'system' or 'user' to select which units to check
+##PARMDFLT system
 {
+    # receive parameters and set defaults
+    local what="${1:-system}"
+
+    # select what to do
+    local params=(--full)
+    case "$what" in
+	system)
+	;;
+
+	user)
+	    params+=(--user)
+	    ;;
+
+	*)
+	    echo "C:systemctl:configuration error - undefined value \`$what' for \$1"
+	    return
+	    ;;
+    esac
+
     # read output into array
-    declare -a UNITS
-    readarray -t UNITS < <(systemctl --full | grep failed | cut -d\  -f 2)
+    declare -a units
+    readarray -t units < <(systemctl "${params[@]}" | grep failed | cut -d\  -f 2)
 
     # output
-    if [ ${#UNITS[@]} -gt 0 ]; then
-	local UNIT
-	for UNIT in "${UNITS[@]}"; do
-	    echo "C:systemctl:failed unit $UNIT"
+    if [ ${#units[@]} -gt 0 ]; then
+	local unit
+	for unit in "${units[@]}"; do
+	    echo "C:systemctl-$what:failed unit $unit"
 	done
     else
-	echo "I:systemctl:no failed units"
+	echo "I:systemctl-$what:no failed units"
     fi
 }
