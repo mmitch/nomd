@@ -51,6 +51,7 @@ def get_temperature:    get_value | round ;
 # select only those stream elements which contain the temperatures
 select( get_sensor_name | test("^(drivetemp|nvme)-") )
 | select( get_sensor_reading == "temp1_input" )
+| select( get_value | numbers )
 
 # combine each sensor name with their temperature
 | [ get_sensor_name, get_temperature ]
