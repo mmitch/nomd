@@ -80,6 +80,6 @@ EOF
         else
             severity=I
         fi
-        echo "$severity:nomd_temperature_hdd:drive $drive has $temp°C"
+        echo "$severity:nomd_temperature_disks:drive $drive has $temp°C"
     done
 }
