@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2021  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP sensors
+##SHELLDEP jq
+
+check_temperature_disks()
+##CHECKDSC check disk temperatures (drivetemp-* and nvme-* from sensors(1))
+#
+##PARMNAME $1
+##PARMDESC minimum warning temperature in °C
+##PARMDFLT 38
+#
+##PARMNAME $2
+##PARMDESC minimum critical temperature in °C
+##PARMDFLT 42
+{
+    # receive parameters
+    local temp_warn="${1:-38}"
+    local temp_crit="${2:-42}"
+
+    # check temperatures
+    sensors -j | jq -r -f <(
+	    cat <<EOF
+# sorry for extended comments but I'm not fluent in jq(1) and have to maintain this
+
+# expand object keys to key/value objects
+# { "drivetemp1": { ... } }   --->   { "key": "drivetemp1", "value": { ... } }
+to_entries
+
+# combine objects into array
+# { "key": "drivetemp1", ... } { "key": "drivetemp2", ... }   --->   [ { "key": "drivetemp1", ... }, { "key": "drivetemp2", ... } ]
+| .[]
+
+# combine two parts:  select(A), select(B)
+| (
+
+#    select only nvme objects
+     select( .key | test("^nvme-"))
+#    extract [ key, temperature ] from objects while rounding temperature to nearest integer
+     | [ .key, (.value.Composite.temp1_input | round) ]
+
+   ),
+  (
+
+#    select only drivetemp objects
+     select( .key | test("^drivetemp-"))
+#    extract [ key, temperature ] from objects while rounding temperature to nearest integer
+     | [ .key, (.value.temp1.temp1_input | round) ]
+
+   )
+   
+# combine [ name, temperature ] arrays into a "name temperature" strings
+| join(" ")
+EOF
+	) | while read -r drive temp; do
+        local severity
+        if [ "$temp" -ge "$temp_crit" ]; then
+            severity=C
+        elif [ "$temp" -ge "$temp_warn" ]; then
+            severity=W
+        else
+            severity=I
+        fi
+        echo "$severity:nomd_temperature_hdd:drive $drive has $temp°C"
+    done
+}
