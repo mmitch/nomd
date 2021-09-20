@@ -71,15 +71,24 @@ to_entries
 # combine [ name, temperature ] arrays into a "name temperature" strings
 | join(" ")
 EOF
-	) | while read -r drive temp; do
-        local severity
-        if [ "$temp" -ge "$temp_crit" ]; then
-            severity=C
-        elif [ "$temp" -ge "$temp_warn" ]; then
-            severity=W
-        else
-            severity=I
-        fi
-        echo "$severity:nomd_temperature_disks:drive $drive has $temp°C"
-    done
+	) | {
+	found=no
+
+	while read -r drive temp; do
+            local severity
+            if [ "$temp" -ge "$temp_crit" ]; then
+		severity=C
+            elif [ "$temp" -ge "$temp_warn" ]; then
+		severity=W
+            else
+		severity=I
+            fi
+            echo "$severity:nomd_temperature_disks:drive $drive has $temp°C"
+	    found=yes
+	done
+
+	if [ "$found" = no ]; then
+	    echo "W:nomd_temperature_disks:no drives found"
+	fi
+    }
 }
