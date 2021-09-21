@@ -68,7 +68,7 @@ to_entries
 
    )
    
-# combine [ name, temperature ] arrays into a "name temperature" strings
+# combine [ name, temperature ] arrays into "name temperature" strings
 | join(" ")
 EOF
 	) | {
