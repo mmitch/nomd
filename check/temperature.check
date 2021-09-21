@@ -38,37 +38,25 @@ check_temperature_disks()
     local temp_crit="${2:-42}"
 
     # check temperatures
-    sensors -j | jq -r -f <(
+    sensors -j | jq --raw-output --stream --from-file <(
 	    cat <<EOF
-# sorry for extended comments but I'm not fluent in jq(1) and have to maintain this
+# in streaming mode, all objects are streamed as [[path], value] elements, with path having multiple parts
+def get_path:  .[0] ;
+def get_value: .[1] ;
 
-# expand object keys to key/value objects
-# { "drivetemp1": { ... } }   --->   { "key": "drivetemp1", "value": { ... } }
-to_entries
+# extract information from stream elements
+def get_sensor_name:    get_path  | .[0]  ; # first path element
+def get_sensor_reading: get_path  | .[2]  ; # third path element
+def get_temperature:    get_value | round ;
 
-# combine objects into array
-# { "key": "drivetemp1", ... } { "key": "drivetemp2", ... }   --->   [ { "key": "drivetemp1", ... }, { "key": "drivetemp2", ... } ]
-| .[]
+# select only those stream elements which contain the temperatures
+select( get_sensor_name | test("^(drivetemp|nvme)-") )
+| select( get_sensor_reading == "temp1_input" )
 
-# combine two parts:  select(A), select(B)
-| (
+# combine each sensor name with their temperature
+| [ get_sensor_name, get_temperature ]
 
-#    select only nvme objects
-     select( .key | test("^nvme-"))
-#    extract [ key, temperature ] from objects while rounding temperature to nearest integer
-     | [ .key, (.value.Composite.temp1_input | round) ]
-
-   ),
-  (
-
-#    select only drivetemp objects
-     select( .key | test("^drivetemp-"))
-#    extract [ key, temperature ] from objects while rounding temperature to nearest integer
-     | [ .key, (.value.temp1.temp1_input | round) ]
-
-   )
-   
-# combine [ name, temperature ] arrays into "name temperature" strings
+# combine name/temp pairs to space separated strings
 | join(" ")
 EOF
 	) | {
