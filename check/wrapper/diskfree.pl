@@ -62,7 +62,7 @@ FS: foreach my $fs ($sysfs->mounted_filesystems) {
 	$warn++;
     }
 
-    $status = sprintf '%3.0d%% free blocks', $block_p;
+    $status = sprintf '%3.0f%% free blocks', $block_p;
 
     if (exists $df->{files}) {
 	my $inode_p = $df->{ffree} / $df->{files} * 100;
@@ -74,7 +74,7 @@ FS: foreach my $fs ($sysfs->mounted_filesystems) {
 	    $warn++;
 	}
 
-	$status .= sprintf ', %3.0d%% free inodes', $inode_p;
+	$status .= sprintf ', %3.0f%% free inodes', $inode_p;
     }
 
     my $sev;
