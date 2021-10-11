@@ -67,6 +67,8 @@ select( get_sensor_name | test("^(drivetemp|nvme)-") )
 		severity=C
             elif [ "$temp" -ge "$temp_warn" ]; then
 		severity=W
+	    elif [ "$temp" -eq 0 ]; then
+		severity=W
             else
 		severity=I
             fi
