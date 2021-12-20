@@ -72,12 +72,12 @@ select( get_sensor_name | test("^(drivetemp|nvme)-") )
             else
 		severity=I
             fi
-            echo "$severity:nomd_temperature_disks:drive $drive has $temp°C"
+            echo "$severity:temperature_disks:drive $drive has $temp°C"
 	    found=yes
 	done
 
 	if [ "$found" = no ]; then
-	    echo "W:nomd_temperature_disks:no drives found"
+	    echo "W:temperature_disks:no drives found"
 	fi
     }
 }
