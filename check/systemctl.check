@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2022  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -27,7 +27,7 @@ check_systemctl()
 ##CHECKDSC check systemctl for failed units
 {
     # read output into array
-    declare -a UNITS
+    local -a UNITS
     readarray -t UNITS < <(systemctl --full | grep failed | cut -d\  -f 2)
 
     # output

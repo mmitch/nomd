@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018, 2022  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -33,7 +33,7 @@ notify_dbus()
     local FILTER=${1:-^[CW]}
 
     # map severities to urgencies
-    declare -A URG
+    local -A URG
     URG=( [C]=critical [W]=normal [I]=low )
 
     # send messages

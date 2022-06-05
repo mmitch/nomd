@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2020  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2020, 2022  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -37,7 +37,7 @@ check_needrestart()
     local BINARY="${1:-/usr/sbin/needrestart}"
 
     # read output into array
-    declare -a PROCESSES
+    local -a PROCESSES
     readarray -t PROCESSES < <("$BINARY" -b | sed -n -e '/^NEEDRESTART-PID: /s/NEEDRESTART-PID: //' -e 's/=\([0-9]*\)/ (pid \1)/p')
 
     # output

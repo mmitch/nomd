@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017, 2018  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2018, 2022  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -39,7 +39,7 @@ notify_mail()
 {
     # map severities to longtext
     # TODO: pull this up to the main script
-    declare -A SEVERITY
+    local -A SEVERITY
     SEVERITY=( [C]='[CRIT]' [W]='[WARN]' [I]='[INFO]' )
     
     # receive parameters and set defaults
