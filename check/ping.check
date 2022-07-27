@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017, 2022  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -27,13 +27,21 @@ check_ping_alive()
 ##PARMNAME $1
 ##PARMDESC host to ping
 ##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC additional name to display (useful for distinguishing IP addresses)
+##PARMDFLT none
 {
     # receive parameters and set defaults
     local HOST="${1:-localhost}"
+    local HOSTNAME
+    if [ "$2" ]; then
+	HOSTNAME=" ($2)"
+    fi
 
     if ping -W 5 -c 1 "$HOST" >/dev/null; then
-	echo "I:ping_alive:got response from $HOST"
+	echo "I:ping_alive:got response from $HOST$HOSTNAME"
     else
-	echo "C:ping_alive:no response from $HOST"
+	echo "C:ping_alive:no response from $HOST$HOSTNAME"
     fi
 }
