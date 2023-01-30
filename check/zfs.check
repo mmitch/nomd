@@ -38,7 +38,7 @@ check_zpool_health()
 	echo "$status:zpool_health:pool $pool is $health"
     done
 
-    if [ "$( "$zpool" status -x | wc -l )" -gt 0 ]; then
+    if [ "$( "$zpool" status -x | wc -l )" -gt 1 ]; then
 	echo "W:zpool_status:have a look a zpool status, something might be wrong"
     fi
 }
