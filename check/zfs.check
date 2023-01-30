@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2020  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2020,2023  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -27,7 +27,9 @@ check_zpool_health()
 {
     local status
 
-    /sbin/zpool list -Hp -o name,health | while read -r pool health; do
+    local zpool=/sbin/zpool
+
+    "$zpool" list -Hp -o name,health | while read -r pool health; do
 	if [ "$health" = ONLINE ]; then
 	    status=I
 	else
@@ -35,4 +37,8 @@ check_zpool_health()
 	fi
 	echo "$status:zpool_health:pool $pool is $health"
     done
+
+    if [ "$( "$zpool" status -x | wc -l )" -gt 0 ]; then
+	echo "W:zpool_status:have a look a zpool status, something might be wrong"
+    fi
 }
