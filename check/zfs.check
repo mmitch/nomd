@@ -42,3 +42,39 @@ check_zpool_health()
 	echo "W:zpool_status:have a look a zpool status, something might be wrong"
     fi
 }
+
+check_zpool_capacity()
+##CHECKDSC check ZFS zpool capacity
+#
+##PARMNAME $1
+##PARMDESC zpool name to check
+##PARMDFLT tank
+#
+##PARMNAME $2
+##PARMDESC capacity warning threshold [0..100]
+##PARMDFLT 90
+#
+##PARMNAME $3
+##PARMDESC capacity critical threshold [0..100]
+##PARMDFLT 95
+{
+    local zpool=/sbin/zpool
+
+    # receive parameters and set defaults
+    local pool="${1:-tank}" warn="${2:-90}" crit="${3:-90}"
+
+    # get capacity
+    local cap
+    cap=$("$zpool" list -Hp -o capacity "$pool")
+
+    # check ca
+    local status=I
+    if [ "$cap" -gt "$crit" ]; then
+	status=C
+    elif [ "$cap" -gt "$warn" ]; then
+	status=W
+    fi
+
+    # output
+    echo "${status}:zpool_capacity:${cap}% used on ${pool}"
+}
