@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2023  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP sed
+##SHELLDEP timedatectl
+
+check_timesyncd_status()
+##CHECKDSC check systemd timesyncd status
+##CHECKDSC looks at available peers and current offset
+{
+    # get timesyncd data
+    local status
+    offset=$(LANG=C timedatectl timesync-status | grep Offset:)
+
+    if [ -z "$offset" ]; then
+	echo 'C:timesyncd_status:timedatectl binary missing or no output'
+	return
+    fi
+
+    # parse output
+    if [ "${offset: -2}" != 'ms' ]; then
+	echo 'C:timesyncd_status:ntp offset is not given in "ms"'
+	return
+    fi
+
+    offset=${offset:0:-2} # remove unit
+    offset=${offset##*: } # remove key/prefix
+    offset=${offset%%.*}  # remove fractional digits
+
+    # generate status
+    local range=60
+    if [ "$offset" -lt -$range ] || [ "$offset" -gt $range ]; then
+	echo "C:timesyncd_status:offset $offset more than ${range}ms"
+	return
+    fi
+
+    range=10
+    if [ "$offset" -lt -$range ] || [ "$offset" -gt $range ]; then
+	echo "W:timesyncd_status:offset $offset more than ${range}ms"
+	return
+    fi
+
+    echo "I:timesyncd_status:current offset ${offset}ms"
+}
