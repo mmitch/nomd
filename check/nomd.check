@@ -32,7 +32,10 @@ check_nomd_updates()
     fi
 
     # update remote refs (needs to be completely silenced - good luck with actual bugs...)
-    git remote update >/dev/null 2>/dev/null
+    if ! git remote update >/dev/null 2>/dev/null; then
+	echo 'C:nomd_updates:error on "git remote update" - no check possible'
+	return
+    fi
 
     # get latest local, upstream and common commit
     local LOCAL UPSTREAM COMMON
