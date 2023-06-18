@@ -27,10 +27,13 @@ check_ntpd_status()
 {
     # get ntpq data
     local ntpd
-    ntpd=$(ntpq -p)
+    if ! ntpd=$(ntpq -p); then
+	echo 'C:ntpd_status:error calling "ntpq -p"'
+	return
+    fi
 
     if [ -z "$ntpd" ]; then
-	echo 'C:ntpd_status:ntpq binary missing or no output'
+	echo 'C:ntpd_status:no output from "ntpq -p"'
 	return
     fi
 
