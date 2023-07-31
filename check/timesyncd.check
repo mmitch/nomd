@@ -27,7 +27,6 @@ check_timesyncd_status()
 ##CHECKDSC looks at available peers and current offset
 {
     # get timesyncd data
-    local status
     offset=$(LANG=C timedatectl timesync-status | grep Offset:)
 
     if [ -z "$offset" ]; then
@@ -36,14 +35,30 @@ check_timesyncd_status()
     fi
 
     # parse output
-    if [ "${offset: -2}" != 'ms' ]; then
-	echo 'C:timesyncd_status:ntp offset is not given in "ms"'
-	return
-    fi
+    local unit="${offset: -2}"
+    local divisor
+    
+    case $unit in
+	ms)
+	    divisor=1
+	    ;;
 
-    offset=${offset:0:-2} # remove unit
+	us)
+	    divisor=1000
+	    ;;
+
+	*)
+	    echo "C:timesyncd_status:ntp offset as unknown unit: $offset"
+	    return
+	    ;;
+    esac
+
     offset=${offset##*: } # remove key/prefix
+    local original=$offset
+    offset=${offset:0:-2} # remove unit
     offset=${offset%%.*}  # remove fractional digits
+    
+    offset=$(( offset / divisor))
 
     # generate status
     local range=60
@@ -58,5 +73,5 @@ check_timesyncd_status()
 	return
     fi
 
-    echo "I:timesyncd_status:current offset ${offset}ms"
+    echo "I:timesyncd_status:current offset $original"
 }
