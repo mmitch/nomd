@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2023  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP awk
+##SHELLDEP grep
+##SHELLDEP ip
+
+check_default_route_mac()
+##CHECKDSC check the MAC of the default route
+#
+##PARMNAME $1
+##PARMDESC expected MAC
+##PARMDFLT none
+#
+##PARMNAME $2
+##PARMDESC network device to check
+##PARMDFLT eth0
+#
+##PARMNAME $3
+##PARMDESC IP version, either '-4' or '-6'
+##PARMDFLT -4
+#
+{
+    local check_name=arp_default_route_mac
+
+    # receive parameters
+    local expected_mac="$1" device="$2" ipv="${3:-4}"
+    local conf="$expected_mac $device $ipv"
+
+    if [ -z "$expected_mac" ]; then
+	echo "C:$check_name:no expected MAC given for $conf"
+	return
+    fi
+
+    if [ -z "$device" ]; then
+	echo "C:$check_name:no device given for $conf"
+	return
+    fi
+
+    case $ipv in
+	-4) : ;;
+	-6) : ;;
+	*)
+	    echo "C:$check_name:IP VERSION is neither -4 nor -6 for ${conf}"
+	    return
+    esac
+
+    # get default route
+    local default_target
+    default_target=$(ip "$ipv" route list | grep "dev $device" | awk '/^default/{print $3}')
+
+    if [ -z "$default_target" ]; then
+	echo "C:$check_name:could not determine default route target for $conf"
+	return
+    fi
+
+    # get mac
+    actual_mac=$(ip "$ipv" neighbor get "$default_target" dev "$device" | awk "/^$default_target dev $device/{print \$5}")
+
+    # output
+    if [ "$actual_mac" != "$expected_mac" ]; then
+	echo "C:$check_name:default router MAC has changed: got '$actual_mac' instead of '$expected_mac' for $conf"
+    else
+	echo "I:$check_name:got expected MAC for $conf"
+    fi
+}
