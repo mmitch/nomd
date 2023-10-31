@@ -65,10 +65,15 @@ check_default_route_mac()
 
     # get default route
     local default_target
-    default_target=$(ip "$ipv" route list | grep "dev $device" | awk '/^default/{print $3}')
+    default_target=$(ip "$ipv" route list | grep "dev $device" | awk '/^default/{print $3}' | _remove_duplicates)
 
     if [ -z "$default_target" ]; then
 	echo "C:$check_name:could not determine default route target for $conf"
+	return
+    fi
+
+    if [ "$(_count_lines <<< "$default_target")" -gt 1 ]; then
+	echo "C:$check_name:found multiple default route targets for $conf"
 	return
     fi
 
@@ -81,4 +86,16 @@ check_default_route_mac()
     else
 	echo "I:$check_name:got expected MAC for $conf"
     fi
+}
+
+_remove_duplicates()
+{
+    # this works similar to uniq(1), but only needs awk(1) - also the input does not have to be sorted
+    awk '!seen[$0]++'
+}
+
+_count_lines()
+{
+    # this works similar to wc(1) -l, but only needs awk(1)
+    awk 'END{ print NR }'
 }
