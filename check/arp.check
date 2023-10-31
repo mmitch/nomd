@@ -20,7 +20,6 @@
 #
 
 ##SHELLDEP awk
-##SHELLDEP grep
 ##SHELLDEP ip
 
 check_default_route_mac()
@@ -65,7 +64,7 @@ check_default_route_mac()
 
     # get default route
     local default_target
-    default_target=$(ip "$ipv" route list | grep "dev $device" | awk '/^default/{print $3}' | _remove_duplicates)
+    default_target=$(ip "$ipv" route list | awk "/^default.*dev $device/{print \$3}" | _remove_duplicates)
 
     if [ -z "$default_target" ]; then
 	echo "C:$check_name:could not determine default route target for $conf"
