@@ -1,7 +1,7 @@
 nomd nomitoring distribution
 ============================
 
-[![Build Status](https://travis-ci.org/mmitch/nomd.svg?branch=master)](https://travis-ci.org/mmitch/nomd)
+[![Build status](https://github.com/mmitch/nomd/workflows/CI/badge.svg)](https://github.com/mmitch/nomd/actions?query=workflow%3ACI)
 [![GPL 3+](https://img.shields.io/badge/license-GPL%203%2B-blue.svg)](http://www.gnu.org/licenses/gpl-3.0-standalone.html)
 
 Generally, nomd is small and lightweight nomitoring distribution.  
@@ -202,7 +202,7 @@ https://github.com/mmitch/nomd
 license
 -------
 
-Copyright (C) 2017, 2018, 2019, 2020  Christian Garbs <mitch@cgarbs.de>  
+Copyright (C) 2017-2023  Christian Garbs <mitch@cgarbs.de>  
 Licensed under GNU GPL v3 or later.
 
 nomd is free software: you can redistribute it and/or modify
