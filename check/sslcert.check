@@ -105,3 +105,80 @@ _check_cert_validity()
 
     echo "$SEVERITY:$CHECK_NAME:$DAYS_LEFT days left on $CHECK_OBJECT"
 }
+
+check_ssl_hostname_starttls()
+##CHECKDSK check certificate chain and common names via starttls connection
+#
+##PARMNAME $1
+##PARMDESC hostname to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 25
+#
+##PARMNAME $3
+##PARMDESC protocol to use with openssl -starttls
+##PARMDFLT smtp
+#
+##PARAMNAME stdin
+##PARAMDESC commands to send to connection if it can be established
+##PARAMDFLT none
+{
+    # receive parameters and set defaults
+    local HOST=${1:-localhost}
+    local PORT=${2:-25}
+    local PROTO=${3:-smtp}
+
+    # check ssl service
+    {
+	if [ -t 0 ]; then
+	    # stdin is terminal, this will hang, so redirect to empty input
+	    exec <<<''
+	fi
+
+	local STDERR ERROR
+	if STDERR=$(openssl s_client -verify_return_error -verify_hostname "$HOST" -starttls "$PROTO" -connect "$HOST":"$PORT" 2>&1 1>/dev/null); then
+	    echo "I:ssl_hostname_starttls:check ok on $HOST:$PORT:$PROTO"
+	else
+	    ERROR=$(sed -n -e '/error/,1{p;q}' <<< "$STDERR")
+	    echo "C:ssl_hostname_starttls:error on $HOST:$PORT:$PROTO: $ERROR"
+	fi
+    }
+}
+
+check_ssl_hostname()
+##CHECKDSK check certificate chain and common names via ssl connection
+#
+##PARMNAME $1
+##PARMDESC hostname to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 443
+#
+##PARAMNAME stdin
+##PARAMDESC commands to send to connection if it can be established
+##PARAMDFLT none
+{
+    # receive parameters and set defaults
+    local HOST=${1:-localhost}
+    local PORT=${2:-443}
+
+    # check ssl service
+    {
+	if [ -t 0 ]; then
+	    # stdin is terminal, this will hang, so redirect to empty input
+	    exec <<<''
+	fi
+
+	local STDERR ERROR
+	if STDERR=$(openssl s_client -verify_return_error -verify_hostname "$HOST" -connect "$HOST":"$PORT" 2>&1 1>/dev/null); then
+	    echo "I:ssl_hostname:check ok on $HOST:$PORT"
+	else
+	    ERROR=$(sed -n -e '/error/,1{p;q}' <<< "$STDERR")
+	    echo "C:ssl_hostname:error on $HOST:$PORT: $ERROR"
+	fi
+    }
+}
