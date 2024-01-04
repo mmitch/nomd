@@ -84,6 +84,42 @@ check_sslcert_https()
     true | openssl s_client -connect "$HOST:$PORT" -servername "$HOST" 2>/dev/null | _check_cert_validity 'sslcert_https' "$HOST:$PORT"
 }
 
+check_sslcert_starttls()
+##CHECKDSC check for expiring ssl certificates via tcp connect to STARTTLS enabled service
+#
+##PARMNAME $1
+##PARMDESC hostname to connect to
+##PARMDFLT localhost
+#
+##PARMNAME $2
+##PARMDESC port to connect to
+##PARMDFLT 25
+#
+##PARMNAME $3
+##PARMDESC protocol to use with openssl -starttls
+##PARMDFLT smtp
+#
+##PARAMNAME stdin
+##PARAMDESC commands to send to connection if it can be established
+##PARAMDFLT none
+{
+    # receive parameters and set defaults
+    local HOST=${1:-localhost}
+    local PORT=${2:-25}
+    local PROTO=${3:-smtp}
+
+    # check ssl service
+    {
+        if [ -t 0 ]; then
+            # stdin is terminal, this will hang, so redirect to empty input
+            exec <<<''
+        fi
+
+        # check ssl service
+        openssl s_client -connect "$HOST:$PORT" -starttls "$PROTO" 2>/dev/null | _check_cert_validity 'sslcert_starttls' "$HOST:$PORT:$PROTO"
+    }
+}
+
 _CHECK_CERT_NOWSECS=$(date +%s)
 
 _check_cert_validity()
