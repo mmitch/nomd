@@ -60,7 +60,7 @@ _determine_http_get_binary()
 	CHECK_HTTP_GET_BINARY=fetch
     fi
 
-    if [ $CHECK_HTTP_GET_BINARY ]; then
+    if [ "$CHECK_HTTP_GET_BINARY" ]; then
 	echo "I:http_content:binary $CHECK_HTTP_GET_BINARY selected"
     else
 	echo 'C:http_content:no suitable binary found (wget/curl/GET/fetch)'

@@ -61,7 +61,7 @@ _determine_http_head_binary()
 	CHECK_HTTP_HEAD_BINARY=lwp
     fi
 
-    if [ $CHECK_HTTP_HEAD_BINARY ]; then
+    if [ "$CHECK_HTTP_HEAD_BINARY" ]; then
 	echo "I:http_status:binary $CHECK_HTTP_HEAD_BINARY selected"
     else
 	echo 'C:http_status:no suitable binary found (wget/curl/HEAD)'
