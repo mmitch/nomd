@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2024  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP date
+
+check_alerting()
+##CHECKDSC create a weekly test alert to ensure the notifications are working as desired
+#
+##PARMNAME $1
+##PARMDESC day of week for the test alert (0..6, 0 is Sunday)
+##PARMDFLT 3 (Wednesday)
+#
+##PARMNAME $2
+##PARMDESC minute:hour for the test alert to start
+##PARMDFLT 06:00
+#
+##PARMNAME $3
+##PARMDESC minute:hour for the test alert to end
+##PARMDFLT 12:00
+#
+##PARMNAME $4
+##PARMDESC criticality of test alert (I (Info), W (Warning) or C (Critical))
+##PARMDFLT W
+{
+    # receive parameters and set defaults
+    local weekday="${1:-3}"
+    local start="${2:-06:00}"
+    local end="${3:-12:00}"
+    local level="${4:-W}"
+
+    # check for test alert time window
+    if _is_weekday "$weekday" && _is_between "$start" "$end"; then
+	echo "${level}:test_alert:test alert was triggered"
+    else
+	echo 'I:test_alert:test alert did not trigger'
+    fi
+}
+
+_is_weekday()
+{
+    [[ $(date +%w) = "$1" ]]
+}
+
+_is_between()
+{
+    local now
+    now=$(date +%H:%M)
+    if [[ $now > $1 ]] || [[ $now = "$1" ]]; then
+	if [[ $now < $2 ]] || [[ $now = "$2" ]]; then
+	    return 0
+	fi
+    fi
+    return 1
+}
