@@ -169,8 +169,9 @@ check_ssl_hostname_starttls()
     # check ssl service
     {
 	if [ -t 0 ]; then
-	    # stdin is terminal, this will hang, so redirect to empty input
-	    exec <<<''
+	    # stdin is terminal, so no stdin given
+	    # -> provide empty stdin, otherwise we will wait for terminal input...
+	    exec 0</dev/null
 	fi
 
 	local STDERR ERROR
@@ -205,8 +206,9 @@ check_ssl_hostname()
     # check ssl service
     {
 	if [ -t 0 ]; then
-	    # stdin is terminal, this will hang, so redirect to empty input
-	    exec <<<''
+	    # stdin is terminal, so no stdin given
+	    # -> provide empty stdin, otherwise we will wait for terminal input...
+	    exec 0</dev/null
 	fi
 
 	local STDERR ERROR
