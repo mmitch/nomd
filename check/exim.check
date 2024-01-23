@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2024  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP /sbin/exiqgrep
+##SHELLDEP wc
+
+check_exim_queue()
+##CHECKDSC check the Exim mail queue for undelivered and frozen messages
+##CHECKDSC note: you need queue access, eg. via "queue_list_requires_admin = no"
+##CHECKDSC note: /sbin/exiqgrep is currently hardcoded
+#
+##PARMNAME $1
+##PARMDESC age in seconds when undelivered messages are considered too old
+##PARMDFLT 10800 (3 hours)
+{
+    # receive parameters and set defaults
+    local maxage="${1:-10800}"
+
+    local exiqgrep=/sbin/exiqgrep
+    
+    # check for old messages
+    local too_old
+    too_old=$($exiqgrep -o "$maxage" -x -i | wc -l)
+
+    _exim_write_status_expecting_zero "$too_old" old
+
+    # check for frozen messages
+    local frozen
+    frozen=$($exiqgrep -o "$maxage" -x -i | wc -l)
+
+    _exim_write_status_expecting_zero "$frozen" frozen
+}
+
+_exim_write_status_expecting_zero() {
+    local value=$1 what=$2
+    local crit=C
+    if [ "$value" = 0 ]; then
+	crit=I
+    fi
+    echo "$crit:exim_queue:$what message count is $value"
+}
