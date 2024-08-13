@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2024  Christian Garbs <mitch@cgarbs.de>
+# Licensed under GNU GPL v3 or later.
+#
+# This file is part of nomd.
+#
+# nomd is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# nomd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with nomd.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+##SHELLDEP smbclient
+##SHELLDEP tail
+
+check_smb_connect_public()
+##CHECKDSC check connection to public SMB share
+#
+##PARMNAME $1
+##PARMDESC host and share to connect to, eg. //somehost.do.main/share
+##PARMDFLT none
+{
+    # receive parameters and set defaults
+    local service=$1
+
+    # try to connect and capture the (failure) output
+    local output
+    if output=$(_try_smb_connect "$service"); then
+	echo "I:smb_connect_public:connection successful to $output"
+    else
+	echo "C:smb_connect_public:could not connect to $service: $output"
+    fi
+}
+
+check_smb_no_connect_public()
+##CHECKDSC check that no public connection to a SMB share is possible
+#
+##PARMNAME $1
+##PARMDESC host and share to connect to, eg. //somehost.do.main/share
+##PARMDFLT none
+{
+    # receive parameters and set defaults
+    local service=$1
+
+    # try to connect and capture the (failure) output
+    local output
+    if ! output=$(_try_smb_connect "$service"); then
+	if [ "$output" = NT_STATUS_ACCESS_DENIED ]; then
+	    echo "I:smb_no_connect_public:access denied to $service"
+	else
+	    echo "W:smb_no_connect_public:could not connect to $service, but unexpected error reason: $output"
+	fi
+    else
+	echo "C:smb_no_connect_public:unexpected successful connection to $output"
+    fi
+}
+
+_try_smb_connect()
+{
+    local service=$1
+
+    local output
+    if output=$(smbclient -N -c showconnect "$service" 2>&1); then
+	echo "$output"
+	return 0
+    else
+	echo "${output/#*NT_STATUS_/NT_STATUS_}"
+	return 1
+    fi
+
+}
+
