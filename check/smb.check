@@ -20,7 +20,6 @@
 #
 
 ##SHELLDEP smbclient
-##SHELLDEP tail
 
 check_smb_connect_public()
 ##CHECKDSC check connection to public SMB share
