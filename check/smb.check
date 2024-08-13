@@ -29,13 +29,13 @@ check_smb_connect_public()
 ##PARMDESC host and share to connect to, eg. //somehost.do.main/share
 ##PARMDFLT none
 {
-    # receive parameters and set defaults
+    # receive parameters
     local service=$1
 
     # try to connect and capture the (failure) output
     local output
     if output=$(_try_smb_connect "$service"); then
-	echo "I:smb_connect_public:connection successful to $output"
+	echo "I:smb_connect_public:connection successful to $service: $output"
     else
 	echo "C:smb_connect_public:could not connect to $service: $output"
     fi
@@ -47,20 +47,25 @@ check_smb_no_connect_public()
 ##PARMNAME $1
 ##PARMDESC host and share to connect to, eg. //somehost.do.main/share
 ##PARMDFLT none
+#
+##PARMNAME $2
+##PARMDESC expected error message
+##PARMDFLT NT_STATUS_ACCESS_DENIED
 {
     # receive parameters and set defaults
     local service=$1
+    local expected_error=${2:-NT_STATUS_ACCESS_DENIED}
 
     # try to connect and capture the (failure) output
     local output
     if ! output=$(_try_smb_connect "$service"); then
-	if [ "$output" = NT_STATUS_ACCESS_DENIED ]; then
-	    echo "I:smb_no_connect_public:access denied to $service"
+	if [ "$output" = "$expected_error" ]; then
+	    echo "I:smb_no_connect_public:access denied to $service ($output)"
 	else
 	    echo "W:smb_no_connect_public:could not connect to $service, but unexpected error reason: $output"
 	fi
     else
-	echo "C:smb_no_connect_public:unexpected successful connection to $output"
+	echo "C:smb_no_connect_public:unexpected successful connection to $service: $output"
     fi
 }
 
