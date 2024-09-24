@@ -143,7 +143,7 @@ _check_cert_validity()
 }
 
 check_ssl_hostname_starttls()
-##CHECKDSK check certificate chain and common names via starttls connection
+##CHECKDSC check certificate chain and common names via starttls connection
 #
 ##PARMNAME $1
 ##PARMDESC hostname to connect to
@@ -185,7 +185,7 @@ check_ssl_hostname_starttls()
 }
 
 check_ssl_hostname()
-##CHECKDSK check certificate chain and common names via ssl connection
+##CHECKDSC check certificate chain and common names via ssl connection
 #
 ##PARMNAME $1
 ##PARMDESC hostname to connect to
