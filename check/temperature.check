@@ -58,7 +58,7 @@ select( get_sensor_name | test("^(drivetemp|nvme)-") )
 
 # combine name/temp pairs to space separated strings
 | join(" ")
-	' | {
+	' 2>/dev/null | {
 	found=no
 
 	while read -r drive temp; do
