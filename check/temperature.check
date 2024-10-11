@@ -38,7 +38,7 @@ check_temperature_disks()
     local temp_crit="${2:-42}"
 
     # check temperatures
-    sensors -j | jq --raw-output --stream '
+    sensors -j 2>/dev/null | jq --raw-output --stream '
 # in streaming mode, all objects are streamed as [[path], value] elements, with path having multiple parts
 def get_path:  .[0] ;
 def get_value: .[1] ;
@@ -58,7 +58,7 @@ select( get_sensor_name | test("^(drivetemp|nvme)-") )
 
 # combine name/temp pairs to space separated strings
 | join(" ")
-	' 2>/dev/null | {
+	' | {
 	found=no
 
 	while read -r drive temp; do
