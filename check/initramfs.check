@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2021  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2021, 2025  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -47,7 +47,7 @@ check_initrd_modules()
 	lsinitramfs "$initrd" > "$tempfile"
 
 	for module in $modules; do
-	    if grep -q -- "/$module.ko$" "$tempfile"; then
+	    if grep -qE -- "/$module\.ko(\.xz)?$" "$tempfile"; then
 		echo "I:initrd_modules:$initrd contains module $module"
 	    else
 		echo "C:initrd_modules:$initrd is missing module $module"
