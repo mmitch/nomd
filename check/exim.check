@@ -44,7 +44,7 @@ check_exim_queue()
 
     # check for frozen messages
     local frozen
-    frozen=$($exiqgrep -o "$maxage" -x -i | wc -l)
+    frozen=$($exiqgrep -o "$maxage" -z -i | wc -l)
 
     _exim_write_status_expecting_zero "$frozen" frozen
 }
