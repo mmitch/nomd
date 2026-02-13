@@ -86,3 +86,21 @@ check_systemctl()
 
     )
 }
+
+check_active_unit()
+##CHECKDSC check systemctl for an active unit
+#
+##PARMNAME $1
+##PARMDESC the unit to check
+##PARMDFLT default.target
+{
+    # receive parameters and set defaults
+    local unit="${1:-default.target}"
+
+	# check and output
+    if systemctl is-active "$unit" >/dev/null; then
+	echo "I:active_unit:unit $unit is active"
+    else
+	echo "C:active_unit:unit $unit is inactive"
+    fi
+}
