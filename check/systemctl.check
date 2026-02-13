@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2017, 2022  Christian Garbs <mitch@cgarbs.de>
+# Copyright (C) 2017-2026  Christian Garbs <mitch@cgarbs.de>
 # Licensed under GNU GPL v3 or later.
 #
 # This file is part of nomd.
@@ -25,18 +25,64 @@
 
 check_systemctl()
 ##CHECKDSC check systemctl for failed units
+#
+##PARMNAME $1
+##PARMDESC 'system' or 'user' to select which units to check
+##PARMDFLT system
 {
-    # read output into array
-    local -a UNITS
-    readarray -t UNITS < <(systemctl --full | grep failed | cut -d\  -f 2)
+    # receive parameters and set defaults
+    local what="${1:-system}"
 
-    # output
-    if [ ${#UNITS[@]} -gt 0 ]; then
-	local UNIT
-	for UNIT in "${UNITS[@]}"; do
-	    echo "C:systemctl:failed unit $UNIT"
-	done
-    else
-	echo "I:systemctl:no failed units"
-    fi
+    # spawn subshell because environment might be changed
+    (
+
+	# select what to do
+	local params=(--full)
+	case "$what" in
+	    system)
+	    ;;
+
+	    user)
+		if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+		    # try to find dbus session bus
+		    local dbus_socket=/run/user/$UID/bus
+		    if [ ! -e "$dbus_socket" ]; then
+			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is missing"
+			exit
+		    fi
+		    if [ ! -r "$dbus_socket" ]; then
+			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is not readable"
+			exit
+		    fi
+		    if [ ! -w "$dbus_socket" ]; then
+			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is not writable"
+			exit
+		    fi
+		    export DBUS_SESSION_BUS_ADDRESS="unix:path=$dbus_socket"
+		fi
+
+		params+=(--user)
+		;;
+
+	    *)
+		echo "C:systemctl:configuration error - undefined value \`$what' for \$1"
+		exit
+		;;
+	esac
+
+	# read output into array
+	local -a units
+	readarray -t units < <(systemctl "${params[@]}" | grep failed | cut -d\  -f 2)
+
+	# output
+	if [ ${#units[@]} -gt 0 ]; then
+	    local unit
+	    for unit in "${units[@]}"; do
+		echo "C:systemctl-$what:failed unit $unit"
+	    done
+	else
+	    echo "I:systemctl-$what:no failed units"
+	fi
+
+    )
 }
