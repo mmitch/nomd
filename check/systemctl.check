@@ -31,7 +31,7 @@ check_systemctl()
 ##PARMDFLT system
 {
     # receive parameters and set defaults
-    local what="${1:-system}"
+    local what=${1:-system}
 
     # spawn subshell because environment might be changed
     (
@@ -43,23 +43,7 @@ check_systemctl()
 	    ;;
 
 	    user)
-		if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-		    # try to find dbus session bus
-		    local dbus_socket=/run/user/$UID/bus
-		    if [ ! -e "$dbus_socket" ]; then
-			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is missing"
-			exit
-		    fi
-		    if [ ! -r "$dbus_socket" ]; then
-			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is not readable"
-			exit
-		    fi
-		    if [ ! -w "$dbus_socket" ]; then
-			echo "W:systemctl-$what:no connection to user instance: $dbus_socket is not writable"
-			exit
-		    fi
-		    export DBUS_SESSION_BUS_ADDRESS="unix:path=$dbus_socket"
-		fi
+		ensure_dbus_socket_env_is_set systemctl-user
 
 		params+=(--user)
 		;;
@@ -87,8 +71,8 @@ check_systemctl()
     )
 }
 
-check_active_unit()
-##CHECKDSC check systemctl for an active unit
+check_active_system_unit()
+##CHECKDSC check systemctl for an active global unit
 #
 ##PARMNAME $1
 ##PARMDESC the unit to check
@@ -97,10 +81,56 @@ check_active_unit()
     # receive parameters and set defaults
     local unit="${1:-default.target}"
 
-	# check and output
+    # check and output
     if systemctl is-active "$unit" >/dev/null; then
 	echo "I:active_unit:unit $unit is active"
     else
 	echo "C:active_unit:unit $unit is inactive"
+    fi
+}
+
+check_active_user_unit()
+##CHECKDSC check systemctl for an active unit of the current user
+#
+##PARMNAME $1
+##PARMDESC the unit to check
+##PARMDFLT default.target
+{
+    # receive parameters and set defaults
+    local unit=${1:-default.target}
+
+    # spawn subshell because environment is changed
+    (
+	ensure_dbus_socket_env_is_set active_user_unit
+
+	# check and output
+	if systemctl --user is-active "$unit" >/dev/null; then
+	    echo "I:active_user_unit:user unit $unit is active"
+	else
+	    echo "C:active_user_unit:user unit $unit is inactive"
+	fi
+    )
+}
+
+ensure_dbus_socket_env_is_set()
+{
+    local check_name=$1
+
+    if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+	# try to find dbus session bus
+	local dbus_socket=/run/user/$UID/bus
+	if [ ! -e "$dbus_socket" ]; then
+	    echo "W:${check_name}:no connection to user instance: $dbus_socket is missing"
+	    exit
+	fi
+	if [ ! -r "$dbus_socket" ]; then
+	    echo "W:${check_name}:no connection to user instance: $dbus_socket is not readable"
+	    exit
+	fi
+	if [ ! -w "$dbus_socket" ]; then
+	    echo "W:${check_name}:no connection to user instance: $dbus_socket is not writable"
+	    exit
+	fi
+	export DBUS_SESSION_BUS_ADDRESS="unix:path=$dbus_socket"
     fi
 }
